@@ -1,4 +1,5 @@
 import socket
+import logging
 
 # Details about server
 host = "192.168.0.3" # To be obtained dynamically?
