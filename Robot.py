@@ -22,6 +22,7 @@ class Robot():
 
     def shutDown(self):
         # TODO: Shut everything down
+        server.listener.join()
         print("Robot shutting down")
         self.server.closeConnection()
 
