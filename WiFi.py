@@ -122,12 +122,7 @@ class Listener(Agent):
                 try:
                     # Receive data out via the socket
                     data = self.socket.recv(1024)
-<<<<<<< HEAD
                     data = data.decode('UTF-8')
-=======
-                    data.decode('UTF-8')
-                    print(data)
->>>>>>> 0f4afc00aaf5e794e8638fa6b75ac1644e75a3e2
                     # Send the data to the server
                     self.queue.put(data)
                 except IOError:
