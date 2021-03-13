@@ -42,7 +42,7 @@ class WiFi():
         self.sender.queue.put(data)
 
     def receiveData(self):
-        self.listener.queue.get()
+        return self.listener.queue.get()
 
     def closeConnection(self):
         self.listener.isShutDown = 1
@@ -122,8 +122,7 @@ class Listener(Agent):
                 try:
                     # Receive data out via the socket
                     data = self.socket.recv(1024)
-                    data.decode('UTF-8')
-
+                    data = data.decode('UTF-8')
                     # Send the data to the server
                     self.queue.put(data)
                 except IOError:
@@ -141,6 +140,7 @@ class Sender(Agent):
         self.start()
 
     def run(self):
+        data = ""
         print("Sender here")
         while True:
             if self.isShutDown == 0:
