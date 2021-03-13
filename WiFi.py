@@ -123,7 +123,7 @@ class Listener(Agent):
                     # Receive data out via the socket
                     data = self.socket.recv(1024)
                     data.decode('UTF-8')
-
+                    print(data)
                     # Send the data to the server
                     self.queue.put(data)
                 except IOError:
@@ -141,17 +141,18 @@ class Sender(Agent):
         self.start()
 
     def run(self):
+        data = ""
         print("Sender here")
         while True:
             if self.isShutDown == 0:
                 try:
                     # Wait for data from server
                     data = self.queue.get(False)
+
+                    # Send the data out via the socket
+                    self.socket.sendall(str.encode(data))
                 except Exception:
                     pass
-
-                # Send the data out via the socket
-                self.socket.sendall(str.encode(data))
             else:
                 print("Sender shutting down")
                 break
