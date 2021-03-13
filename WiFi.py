@@ -69,7 +69,8 @@ class Server(WiFi):
         # Setup Listener and Sender 
         super().setupAgents(conn)
 
-    def packData(self, dataType, data): 
+    @staticmethod
+    def packData(dataType, data): 
         if dataType == "Sensor":
             temperature = data[0]
             orientation = data[1]
@@ -88,7 +89,8 @@ class Client(WiFi):
         # Setup Listener and Sender
         super().setupAgents()
 
-    def unpackData(self, data):
+    @staticmethod
+    def unpackData(data):
         dataType, data = data.split(":")
         if dataType == "sensor":
             return data.split(",")
