@@ -45,9 +45,9 @@ class WiFi():
         self.listener.queue.get(data)
 
     def closeConnection(self):
-        self.socket.close()
         self.listener.isShutDown = 1
         self.sender.isShutDown = 1
+        self.socket.close()
         logging.info("Closing connection on %s", self.identity)
 
 class Server(WiFi):
@@ -116,12 +116,17 @@ class Listener(Agent):
         print("Listener here")
         while True:
             if self.isShutDown == 0:
-                # Wait for data from server
-                data = self.queue.get()
+                try:
+                    # Wait for data from server
+                    data = self.queue.get(False)
+                    print(data)
 
-                # Send the data out via the socket
-                self.socket.sendall(data)
+                    # Send the data out via the socket
+                    self.socket.sendall(data)
+                except Exception:
+                    pass
             else:
+                print("Listener shutting down")
                 break
 
 class Sender(Agent):
@@ -135,12 +140,16 @@ class Sender(Agent):
         print("Sender here")
         while True:
             if self.isShutDown == 0:
-                # Send the data out via the socket
-                data = self.socket.recv(1024)
+                try:
+                    # Send the data out via the socket
+                    data = self.socket.recv(1024)
 
-                # Wait for data from server
-                self.queue.put(data)
+                    # Wait for data from server
+                    self.queue.put(data)
+                except IOError:
+                    print("Connection lost")
             else:
+                print("Sender shutting down")
                 break
 
 
