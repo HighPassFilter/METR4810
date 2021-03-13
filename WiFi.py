@@ -121,10 +121,9 @@ class Listener(Agent):
                 try:
                     # Wait for data from server
                     data = self.queue.get(False)
-                    print(data)
 
                     # Send the data out via the socket
-                    self.socket.sendall(data)
+                    self.socket.sendall(str.encode(data))
                 except Exception:
                     pass
             else:
@@ -145,7 +144,7 @@ class Sender(Agent):
                 try:
                     # Send the data out via the socket
                     data = self.socket.recv(1024)
-
+                    data.decode('UTF-8')
                     # Wait for data from server
                     self.queue.put(data)
                 except IOError:
