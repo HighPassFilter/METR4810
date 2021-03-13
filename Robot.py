@@ -12,7 +12,7 @@ class Robot():
 
     def shutDown(self):
         # TODO: Shut everything down
-        self.server.closeConnection
+        self.server.closeConnection()
 
     def release(self):
         # TODO: Communicate with pilot to release the clamp
