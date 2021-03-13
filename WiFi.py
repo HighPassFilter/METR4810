@@ -50,7 +50,6 @@ class WiFi():
         self.sender.isShutDown = 1
 
         # Wait for agents to shutdown
-        self.listener.join()
         self.sender.join()
 
         # Close the socket
