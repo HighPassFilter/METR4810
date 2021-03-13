@@ -45,8 +45,15 @@ class WiFi():
         self.listener.queue.get()
 
     def closeConnection(self):
+        # Issue the command to shutdown agents
         self.listener.isShutDown = 1
         self.sender.isShutDown = 1
+
+        # Wait for agents to shutdown
+        self.listener.join()
+        self.sender.join()
+
+        # Close the socket
         self.socket.close()
         logging.info("Closing connection on %s", self.identity)
 
@@ -123,11 +130,14 @@ class Listener(Agent):
                     # Receive data out via the socket
                     data = self.socket.recv(1024)
                     data.decode('UTF-8')
-                    print(data)
+
                     # Send the data to the server
                     self.queue.put(data)
                 except IOError:
                     print("Connection lost")
+                except Exception:
+                    pass
+
 
             else:
                 print("Listener shutting down")
@@ -151,6 +161,8 @@ class Sender(Agent):
 
                     # Send the data out via the socket
                     self.socket.sendall(str.encode(data))
+                except IOError:
+                    print("Connection lost")
                 except Exception:
                     pass
             else:
