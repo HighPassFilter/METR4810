@@ -41,8 +41,8 @@ class WiFi():
     def sendData(self, data):
         self.listener.queue.put(data)
 
-    def receiveData(self, data):
-        self.listener.queue.get(data)
+    def receiveData(self):
+        self.listener.queue.get()
 
     def closeConnection(self):
         self.listener.isShutDown = 1
