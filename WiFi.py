@@ -9,7 +9,7 @@ import threading
 logging.basicConfig(filename='example.log', level=logging.WARNING)
 
 class WiFi():
-    def __init__(self, identity, host, port=7777):
+    def __init__(self, identity, host, port=7777): # Tested
         # Class methods
         self.host = host
         self.port = port
@@ -46,10 +46,12 @@ class WiFi():
 
     def closeConnection(self):
         self.socket.close()
+        self.listener.isShutDown = 1
+        self.sender.isShutDown = 1
         logging.info("Closing connection on %s", self.identity)
 
 class Server(WiFi):
-    def __init__(self, port=7777):
+    def __init__(self, port=7777): # Tested
         # Initialise class attributes
         super().__init__("server", "", port)
 
@@ -67,7 +69,7 @@ class Server(WiFi):
         # Setup Listener and Sender 
         super().setupAgents(conn)
 
-    def packData(self, dataType, data):
+    def packData(self, dataType, data): 
         if dataType == "Sensor":
             temperature = data[0]
             orientation = data[1]
@@ -78,9 +80,8 @@ class Server(WiFi):
             return dataType + ":" + data
 
 class Client(WiFi):
-    def __init__(self, host, port=7777):
+    def __init__(self, host, port=7777): # Tested
         super().__init__("client", host, port)
-        print(self.socket)
         # Connect to the Server
         self.socket.connect((self.host, self.port))
 
@@ -98,27 +99,49 @@ class Agent(threading.Thread):
     def __init__(self, socket):
         self.socket = socket
         self.queue = Queue()
+        self.isShutDown = 0
         threading.Thread.__init__(self)
 
+    # Main loop for listening agent
     def run(self):
-        while True:
-            # Wait for data from server
-            data = self.queue.get()
-
-            # Send the data out via the socket
-            self.socket.sendall(data)
-
-            #data = self.socket.recv(1024)
-            #print(data)
-        # logging.info("")
+        print("Looking for the wrong agent!")
         
 class Listener(Agent):
     def __init__(self, conn):
         super().__init__(conn)
+        # Start listening
+        self.start()
+
+    def run(self):
+        print("Listener here")
+        while True:
+            if self.isShutDown == 0:
+                # Wait for data from server
+                data = self.queue.get()
+
+                # Send the data out via the socket
+                self.socket.sendall(data)
+            else:
+                break
 
 class Sender(Agent):
     def __init__(self, conn):
         super().__init__(conn)
+
+        # Start listening
+        self.start()
+
+    def run(self):
+        print("Sender here")
+        while True:
+            if self.isShutDown == 0:
+                # Send the data out via the socket
+                data = self.socket.recv(1024)
+
+                # Wait for data from server
+                self.queue.put(data)
+            else:
+                break
 
 
 
