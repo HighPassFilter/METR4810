@@ -18,9 +18,14 @@ class WiFi():
         self.identity = identity
 
         # Initialise socket
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        try:
+            self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             print("Socket created")
-            self.socket = s
+            #s.connect((self.host, self.port))
+            #print("HI")
+        except IOError:
+            logging.error("Cannot create socket")
+        
 
     def setupAgents(self, socket=None):
         # Assign socket connection
@@ -38,6 +43,10 @@ class WiFi():
 
     def receiveData(self, data):
         self.listener.queue.get(data)
+
+    def closeConnection(self):
+        self.socket.close()
+        logging.info("Closing connection on %s", self.identity)
 
 class Server(WiFi):
     def __init__(self, port=7777):
@@ -69,11 +78,11 @@ class Server(WiFi):
             return dataType + ":" + data
 
 class Client(WiFi):
-    def __init__(self, host, port):
+    def __init__(self, host, port=7777):
         super().__init__("client", host, port)
-
+        print(self.socket)
         # Connect to the Server
-        self.socket.connect(self.host, self.port)
+        self.socket.connect((self.host, self.port))
 
         # Setup Listener and Sender
         super().setupAgents()
