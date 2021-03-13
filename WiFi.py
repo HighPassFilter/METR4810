@@ -39,7 +39,7 @@ class WiFi():
         self.sender = Sender(conn)
 
     def sendData(self, data):
-        self.listener.queue.put(data)
+        self.sender.queue.put(data)
 
     def receiveData(self):
         self.listener.queue.get()
@@ -115,17 +115,20 @@ class Listener(Agent):
         self.start()
 
     def run(self):
+        data = ""
         print("Listener here")
         while True:
             if self.isShutDown == 0:
                 try:
-                    # Wait for data from server
-                    data = self.queue.get(False)
+                    # Receive data out via the socket
+                    data = self.socket.recv(1024)
+                    data.decode('UTF-8')
 
-                    # Send the data out via the socket
-                    self.socket.sendall(str.encode(data))
-                except Exception:
-                    pass
+                    # Send the data to the server
+                    self.queue.put(data)
+                except IOError:
+                    print("Connection lost")
+
             else:
                 print("Listener shutting down")
                 break
@@ -142,13 +145,13 @@ class Sender(Agent):
         while True:
             if self.isShutDown == 0:
                 try:
-                    # Send the data out via the socket
-                    data = self.socket.recv(1024)
-                    data.decode('UTF-8')
                     # Wait for data from server
-                    self.queue.put(data)
-                except IOError:
-                    print("Connection lost")
+                    data = self.queue.get(False)
+                except Exception:
+                    pass
+
+                # Send the data out via the socket
+                self.socket.sendall(str.encode(data))
             else:
                 print("Sender shutting down")
                 break
