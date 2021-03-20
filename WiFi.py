@@ -42,7 +42,7 @@ class WiFi():
         self.sender.queue.put(data)
 
     def receiveData(self):
-        return self.listener.queue.get()
+        return self.listener.queue.get(False)
 
     def closeConnection(self):
         # Issue the command to shutdown agents
@@ -135,7 +135,6 @@ class Listener(Agent):
                     print("Connection lost")
                 except Exception:
                     pass
-
 
             else:
                 print("Listener shutting down")
