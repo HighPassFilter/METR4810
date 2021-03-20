@@ -8,6 +8,7 @@ class Robot():
         # Setup navigation
 
         # Setup pilot
+        
     def receiveData(self):
         message = self.server.receiveData()
         if message == "abort":
@@ -22,7 +23,6 @@ class Robot():
 
     def shutDown(self):
         # TODO: Shut everything down
-        server.listener.join()
         print("Robot shutting down")
         self.server.closeConnection()
 
