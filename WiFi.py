@@ -42,7 +42,12 @@ class WiFi():
         self.sender.queue.put(data)
 
     def receiveData(self):
-        return self.listener.queue.get()
+        try:
+            data =  self.listener.queue.get(False)
+            return data
+
+        except Exception:
+            return ""
 
     def closeConnection(self):
         # Issue the command to shutdown agents
@@ -82,7 +87,7 @@ class Server(WiFi):
             orientation = data[1]
             acceleration = data[2]
             pressure = data[3]
-            return dataType + ":" + str(temperature) + "," + str(orientation) + "," + str(acceleration) + "," + str(pressure)
+            return dataType + ":" + str(temperature) + "," + str(orientation) + "," + str(acceleration) + "," + str(pressure)+ ";"
         else:
             return dataType + ":" + data
 
@@ -97,6 +102,8 @@ class Client(WiFi):
 
     @staticmethod
     def unpackData(data):
+        if data == "":
+            return data
         dataType, data = data.split(":")
         if dataType == "sensor":
             return data.split(",")
@@ -129,6 +136,7 @@ class Listener(Agent):
                     # Receive data out via the socket
                     data = self.socket.recv(1024)
                     data = data.decode('UTF-8')
+                    print(data)
                     # Send the data to the server
                     self.queue.put(data)
                 except IOError:
@@ -154,7 +162,7 @@ class Sender(Agent):
         while True:
             if self.isShutDown == 0:
                 try:
-                    # Wait for data from server
+                    # Wait for data from 
                     data = self.queue.get(False)
 
                     # Send the data out via the socket
