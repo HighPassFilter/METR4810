@@ -41,7 +41,7 @@ class Robot():
     def sendData(self, dataType, data):
         data = self.server.packData(dataType, data)
         print(data)
-        #server.sendData(data)
+        self.server.sendData(data)
 
         
 
@@ -90,7 +90,7 @@ class Robot():
             (t, y1, y2) = next(gen)
 
             # Start sending robot data to computer
-            self.sendData("Sensor", [t, y1, y2, 1])
+            self.sendData("Sensor", [np.round(t, 2), np.round(y1, 2), np.round(y2, 2), 1.01])
 
         # Perform navigation computations?
 
