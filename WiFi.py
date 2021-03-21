@@ -87,9 +87,9 @@ class Server(WiFi):
             orientation = data[1]
             acceleration = data[2]
             pressure = data[3]
-            return dataType + ":" + str(temperature) + "," + str(orientation) + "," + str(acceleration) + "," + str(pressure)+ ";"
+            return dataType + ":" + str(temperature) + "," + str(orientation) + "," + str(acceleration) + "," + str(pressure)
         else:
-            return dataType + ":" + data + ";"
+            return dataType + ":" + data
 
 class Client(WiFi):
     def __init__(self, host, port=7777): # Tested
@@ -143,9 +143,12 @@ class Listener(Agent):
 
                     # Send the data to device
                     for data in lines:
-                        bytesReceived += len(data)
-                        print(len(data))
-                        print(bytesReceived)
+                        msgLength, msg = data.split("_")
+                        print(int(msgLength))
+                        print(len(msg))
+                        print(msg)
+                        print(int(msgLength) == len(msg))
+
                         #if bytesReceived > 1024:
                         #    print("overloaded here")
                         #    print(data)
@@ -177,8 +180,8 @@ class Sender(Agent):
                     data = self.queue.get(False)
 
                     # Add length of message and delimitter
-                    data = str(len(data)) + "_" + data
-                    
+                    data = str(len(data)) + "_" + data + ";"
+
                     # Send the data out via the socket
                     self.socket.sendall(str.encode(data))
                 except IOError:
