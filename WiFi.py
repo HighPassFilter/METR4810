@@ -129,34 +129,45 @@ class Listener(Agent):
 
     def run(self):
         data = ""
+        msg = ""
         bytesReceived = 0
+        fragmented = 0
         print("Listener here")
         while True:
             if self.isShutDown == 0:
                 try:
                     # Receive data out via the socket
-                    data = self.socket.recv(1024)
+                    data = self.socket.recv(4096)
                     data = data.decode('UTF-8')
                     
                     # Check how many lines of messages have been sent
                     lines = data.split(";")
+                    bytesReceived += len(lines)
 
                     # Send the data to device
                     for data in lines:
-                        msgLength, msg = data.split("_")
-                        print(int(msgLength))
-                        print(len(msg))
-                        print(msg)
-                        print(int(msgLength) == len(msg))
+                        if fragmented == 0:
+                            packet = data.split("_")
+                            msg = packet[1]
+                            
+                            # Check for data fragmentation
+                            if int(packet[0]) != len(packet[1]):
+                                # Look for the next line and combine it with the current packet
+                                fragmented = 1
+                            else:
+                                # Sent the message to the device
+                                self.queue.put(msg)
 
-                        #if bytesReceived > 1024:
-                        #    print("overloaded here")
-                        #    print(data)
-                        #self.queue.put(data)
+                        else:
+                            # Combine data fragments
+                            msg += data
+                            fragmented = 0
+                            self.queue.put(msg)
 
                 except IOError:
                     print("Connection lost")
-                except Exception:
+                except Exception as e:
+                    print(e)
                     pass
 
             else:
