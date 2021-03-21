@@ -105,8 +105,14 @@ class Client(WiFi):
         if data == "":
             return data
         dataType, data = data.split(":")
-        if dataType == "sensor":
-            return data.split(",")
+        if dataType == "Sensor":
+            data = data.split(",")
+
+            # Ensure that data is in float format
+            for i in range(len(data)):
+                data[i] = float(data[i])
+
+            return data
         else:
             return data
 
@@ -167,7 +173,6 @@ class Listener(Agent):
                 except IOError:
                     print("Connection lost")
                 except Exception as e:
-                    print(e)
                     pass
 
             else:

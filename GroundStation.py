@@ -56,7 +56,6 @@ class GroundStation():
             # Receive data from robot
             data = self.receiveRobotData()
 
-            print(data)
             # Plot the data
 
     def receiveRobotData(self):
