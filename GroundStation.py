@@ -1,12 +1,15 @@
-import keyboard
+# Telemetry libraries
 from WiFi import Client
-import matplotlib
+
+
+
+# Threading libraries
 from queue import Queue
 from threading import Thread
-
-
 class GroundStation():
     def __init__(self):
+        # Initialise class methods
+        self.releaseFlag = 0
         # Setup user interface
         self.user = UserInterface()
 
@@ -16,6 +19,14 @@ class GroundStation():
 
         # Setup client connection to robot
         self.client = Client(host)
+
+        # Request user for release command
+        option = self.user.queue.get()
+        while int(option) != 2:
+            print("Please press 2 to release the robot")
+            option = self.user.queue.get()
+        
+        self.command(option)
 
     def shutDown(self):
         self.client.closeConnection()
@@ -31,37 +42,23 @@ class GroundStation():
             # Release
             print("Release!")
             self.client.sendData("release")
-            self.trackRobot()
 
         elif option == 3:
             # Shutdown
             print("Shutting system down")
             self.client.sendData("shutdown")
             self.shutDown()
-    
-    def trackRobot(self):
-        while True:
-            # Check controller inputs
-            try:
-                option = self.user.queue.get(False)
-                self.command(option)
 
-            except IOError:
-                # No commands given
-                pass
-
-            if option == 1 or option == 3:
-                break
-
-            # Receive data from robot
-            data = self.receiveRobotData()
-
-            print(data)
             # Plot the data
 
     def receiveRobotData(self):
         data = self.client.receiveData()
         return self.client.unpackData(data)
+
+    def gen_wrapper(self):
+        while True:
+            data = self.receiveRobotData()
+            yield data
 
 class UserInterface(Thread):
     def __init__(self):
@@ -81,8 +78,27 @@ class UserInterface(Thread):
             self.queue.put(int(option))
             if int(option) == 3:
                 break
+    
 
+def run(data):
+    data = groundStation.re
+    # update the data
+    xdata.append(data[0])
+    y1data.append(data[1])
+    y2data.append(data[2])
 
+    # axis limits checking. Same as before, just for both axes
+    for ax in [ax1, ax2]:
+        xmin, xmax = ax.get_xlim()
+        if t >= xmax:
+            ax.set_xlim(xmin, 2*xmax)
+            ax.figure.canvas.draw()
+
+    # update the data of both line objects
+    line[0].set_data(xdata, y1data)
+    line[1].set_data(xdata, y2data)
+
+    return line
 
 def controller():
     if keyboard.is_pressed("1") and keyboard.is_pressed("="):
