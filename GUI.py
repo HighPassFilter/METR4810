@@ -4,12 +4,13 @@ import matplotlib.animation as animation
 class UserInterface():
     def __init__(self):
         # Initialise states
-        
+
         # Setup terminal for receiving user inputs
         self.terminal = UserInput()
         self.terminal.start()
         
-        #
+    def setupPipe(self, pipe):
+        self.terminal.main_pipe = pipe
 
 # This class controls the states of the user interface
 class UserInput(Thread):
@@ -18,6 +19,7 @@ class UserInput(Thread):
 
     def __init__(self):
         self.queue = Queue()
+        self.main_pipe = ""
         Thread.__init__(self)
 
     def run(self):
