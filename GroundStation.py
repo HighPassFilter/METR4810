@@ -6,6 +6,9 @@ from StateMachine import States
 from queue import Queue
 from threading import Thread
 from multiprocessing import Process, Pipe
+import pandas as pd
+import datetime
+
 class GroundStation():
     def __init__(self, pipe):
         # Initialise class methods
@@ -13,6 +16,7 @@ class GroundStation():
         self.client = ""
         self.tele_pipe = pipe
         self.guiListener = ""
+        self.sensorData = [[], [], [], [], []]
 
         # Setup new process
         self.process = Process(target=telemetryProcess, args=(self,))
@@ -81,9 +85,30 @@ class GroundStation():
 
         while self.state.toDescent(): 
             self.optionHandler(self.state.descentOptions)
-            # Keep sending data received from the robot
-            self.tele_pipe.send(self.receiveRobotData())
+            # Receive data from the robot
             
+            data = self.receiveRobotData()
+            
+            if data != "":
+                # Timestamp the data
+                self.sensorData[0].append(datetime.datetime.now())
+                # Store the non empty data
+                self.sensorData[1].append(data[0])
+                self.sensorData[2].append(data[1])
+                self.sensorData[3].append(data[2])
+                self.sensorData[4].append(data[3])
+
+            # Send the data to the GUI
+            self.tele_pipe.send(data)
+
+        # Save the sensor data as a csv file
+        print(self.sensorData)
+        df = pd.DataFrame(self.sensorData, column=["TS", "Temperature", "Orientation", "Acceleration", "Pressure"])
+        df = df.T
+        date = datetime.datetime.now()
+        filename = "sensor_" + str(date.month) + "_" + str(date.day) + "_" + str(date.hour) + "_" +str(date.minute) + "_" + str(date.second) + ".csv"
+        df.to_csv(filename, index=False)
+
         # Move to ready state # Need to properly trigger switch as well
         self.state.descent = 0
         self.stateReady()
