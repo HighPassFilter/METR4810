@@ -19,7 +19,7 @@ class TelemetryPacket:
 
 	def process_packet(self, packet):
 		count = 1
-		print(int((len(packet)-1)/4))
+		#print(int((len(packet)-1)/4))
 
 		for i in range(int((len(packet)-1)/4)):
 			data_id = packet[1+i*4]
@@ -76,7 +76,7 @@ ser.reset_input_buffer()
 result_list = []
 telem = TelemetryPacket
 
-while 0:
+while 1:
 	x = None
 	time.sleep(10/9600)
 	try:
