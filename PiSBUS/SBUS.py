@@ -124,5 +124,5 @@ controller = Controller()
 
 while 1:
 
-    controller.send_sbus_msg(controller)
+    controller.send_sbus_msg()
     sleep(0.07)
