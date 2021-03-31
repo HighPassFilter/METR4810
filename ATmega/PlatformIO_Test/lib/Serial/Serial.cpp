@@ -10,7 +10,7 @@
 
 void Serial::begin(unsigned long baud, unsigned long Fosc, int USART)
 {
-    #define BAUD_PRESCALE (((F_CPU / (baud * Fosc))) - 1) 
+    #define BAUD_PRESCALE (((Fosc / (baud * 16UL))) - 1) 
 
     if (USART == 0)
     {
@@ -26,7 +26,7 @@ void Serial::begin(unsigned long baud, unsigned long Fosc, int USART)
 void Serial::SendMessage(char* mess)
 {
     //Sends Message over serial, handled in ISR in main program
-    strcpy(Serial::message, mess);
+    strcpy(Serial::tx_message, mess);
     Serial::StrIndex = 0;
     Serial::SendingMessage = true;
     UCSR0B |= (1 << UDRIE0);
