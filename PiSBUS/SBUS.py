@@ -100,21 +100,15 @@ class Controller:
                                   parity=serial.PARITY_EVEN,
                                   stopbits=serial.STOPBITS_TWO)
 
-        #-----------------------------------------------------------------------
-        # Set up the service
-        #-----------------------------------------------------------------------
-        self.setName('Controller')
-        self.sbus_loop = LoopingCall(self.send_sbus_msg)
+    # #---------------------------------------------------------------------------
+    # def startService(self):
+    #     self.log.info('Starting controller')
+    #     self.sbus_loop.start(0.07)
 
-    #---------------------------------------------------------------------------
-    def startService(self):
-        self.log.info('Starting controller')
-        self.sbus_loop.start(0.07)
-
-    #---------------------------------------------------------------------------
-    def stopService(self):
-        self.log.info('Stopping controller')
-        self.sbus_loop.stop()
+    # #---------------------------------------------------------------------------
+    # def stopService(self):
+    #     self.log.info('Stopping controller')
+    #     self.sbus_loop.stop()
 
     #---------------------------------------------------------------------------
     def send_sbus_msg(self):
