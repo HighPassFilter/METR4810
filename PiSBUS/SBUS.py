@@ -96,7 +96,7 @@ class Controller:
         # Set up the SBUS encoder and open the serial port
         #-----------------------------------------------------------------------
         self.encoder = SBUSEncoder()
-        self.port = serial.Serial(tty_file, baudrate=int(100000*1.57),
+        self.port = serial.Serial(tty_file, baudrate=int(100000),
                                   parity=serial.PARITY_EVEN,
                                   stopbits=serial.STOPBITS_TWO)
 
