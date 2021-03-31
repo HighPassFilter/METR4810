@@ -124,6 +124,5 @@ controller = Controller()
 
 while 1:
 
-    //controller.send_sbus_msg()
-    controller.port.write(b'0x0F')
+    controller.send_sbus_msg()
     time.sleep(0.07)
