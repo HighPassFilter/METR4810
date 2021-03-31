@@ -28,6 +28,9 @@ class WiFi():
         
 
     def setupAgents(self, socket=None):
+        # Make the socket non-blocking
+        self.socket.settimeout(1)
+
         # Assign socket connection
         if socket != None:
             conn = socket
@@ -139,45 +142,45 @@ class Listener(Agent):
         bytesReceived = 0
         fragmented = 0
         print("Listener here")
-        while True:
-            if self.isShutDown == 0:
-                try:
-                    # Receive data out via the socket
-                    data = self.socket.recv(4096)
-                    data = data.decode('UTF-8')
-                    
-                    # Check how many lines of messages have been sent
-                    lines = data.split(";")
-                    bytesReceived += len(lines)
+        while self.isShutDown == 0:
 
-                    # Send the data to device
-                    for data in lines:
-                        if fragmented == 0:
-                            packet = data.split("_")
-                            msg = packet[1]
-                            
-                            # Check for data fragmentation
-                            if int(packet[0]) != len(packet[1]):
-                                # Look for the next line and combine it with the current packet
-                                fragmented = 1
-                            else:
-                                # Sent the message to the device
-                                self.queue.put(msg)
+            try:
+                # Receive data out via the socket
+                data = self.socket.recv(4096)
+                data = data.decode('UTF-8')
+                
+                # Check how many lines of messages have been sent
+                lines = data.split(";")
+                bytesReceived += len(lines)
 
+                # Send the data to device
+                for data in lines:
+                    if fragmented == 0:
+                        packet = data.split("_")
+                        msg = packet[1]
+                        
+                        # Check for data fragmentation
+                        if int(packet[0]) != len(packet[1]):
+                            # Look for the next line and combine it with the current packet
+                            fragmented = 1
                         else:
-                            # Combine data fragments
-                            msg += data
-                            fragmented = 0
+                            # Sent the message to the device
                             self.queue.put(msg)
 
-                except IOError:
-                    print("Connection lost")
-                except Exception as e:
-                    pass
+                    else:
+                        # Combine data fragments
+                        msg += data
+                        fragmented = 0
+                        self.queue.put(msg)
 
-            else:
-                print("Listener shutting down")
-                break
+            except socket.timeout:
+                pass
+            except Exception as e:
+                # Report any errors and exit
+                print(e)
+                self.isShutDown = 1
+
+        print("Listener shutting down")
 
 class Sender(Agent):
     def __init__(self, conn):
@@ -189,24 +192,25 @@ class Sender(Agent):
     def run(self):
         data = ""
         print("Sender here")
-        while True:
-            if self.isShutDown == 0:
-                try:
-                    # Wait for data from 
-                    data = self.queue.get(False)
+        while self.isShutDown == 0:
 
-                    # Add length of message and delimitter
-                    data = str(len(data)) + "_" + data + ";"
+            try:
+                # Wait for data from 
+                data = self.queue.get(False)
 
-                    # Send the data out via the socket
-                    self.socket.sendall(str.encode(data))
-                except IOError:
-                    print("Connection lost")
-                except Exception:
-                    pass
-            else:
-                print("Sender shutting down")
-                break
+                # Add length of message and delimitter
+                data = str(len(data)) + "_" + data + ";"
+
+                # Send the data out via the socket
+                self.socket.sendall(str.encode(data))
+            except socket.timeout:
+                pass
+            except Exception as e:
+                # Report any errors and exit
+                print(e)
+                self.isShutDown = 1
+
+        print("Sender shutting down")
 
 
 

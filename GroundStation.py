@@ -103,8 +103,9 @@ class GroundStation():
 
         # Save the sensor data as a csv file
         print(self.sensorData)
-        df = pd.DataFrame(self.sensorData, column=["TS", "Temperature", "Orientation", "Acceleration", "Pressure"])
+        df = pd.DataFrame(self.sensorData)
         df = df.T
+        df.columns = ["TS", "Temperature", "Orientation", "Acceleration", "Pressure"]
         date = datetime.datetime.now()
         filename = "sensor_" + str(date.month) + "_" + str(date.day) + "_" + str(date.hour) + "_" +str(date.minute) + "_" + str(date.second) + ".csv"
         df.to_csv(filename, index=False)
