@@ -57,7 +57,7 @@ class WiFi():
 
         # Wait for agents to shutdown
         self.listener.join()
-        self.sender.join()
+        self.sender.join() # Sender not shutting down
         # Close the socket
         self.socket.close()
         logging.info("Closing connection on %s", self.identity)
@@ -156,7 +156,7 @@ class Listener(Agent):
                 for data in lines:
                     if fragmented == 0:
                         packet = data.split("_")
-                        print(packet)
+                        #print(packet)
                         # Remove empty packet
                         if '' in packet:
                             pass
@@ -214,7 +214,7 @@ class Sender(Agent):
 
             try:
                 # Wait for data from 
-                data = self.queue.get()
+                data = self.queue.get(False)
 
                 # Add length of message and delimitter
                 data = str(len(data)) + "_" + data + ";"
