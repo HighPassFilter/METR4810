@@ -6,7 +6,7 @@ import logging
 import threading
 
 # Data logger setup
-logging.basicConfig(filename='example.log', level=logging.WARNING)
+logging.basicConfig(level=logging.WARNING)
 
 class WiFi():
     def __init__(self, identity, host, port=7777): # Tested
@@ -75,7 +75,6 @@ class Server(WiFi):
 
         # Listen for a connection
         self.socket.listen()
-
         # Accept the connection from client
         conn, addr = self.socket.accept()
         logging.info("Server connected to %s", addr)
@@ -196,7 +195,7 @@ class Sender(Agent):
 
             try:
                 # Wait for data from 
-                data = self.queue.get(False)
+                data = self.queue.get()
 
                 # Add length of message and delimitter
                 data = str(len(data)) + "_" + data + ";"
