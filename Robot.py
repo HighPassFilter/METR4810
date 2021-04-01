@@ -143,7 +143,7 @@ class Robot():
 
     def sendData(self, dataType, data):
         data = self.server.packData(dataType, data)
-        print(data)
+        #print(data)
         self.server.sendData(data)       
 
     def shutDown(self):
@@ -152,8 +152,11 @@ class Robot():
         self.server.closeConnection()
     
     def reset(self):
-        # Send the command to the pilot to reset
         print("Robot resetting")
+        # Shutdown the wifi connection
+        self.server.closeConnection()
+        # Send the command to the pilot to reset
+        
 
 
 def data_gen():
