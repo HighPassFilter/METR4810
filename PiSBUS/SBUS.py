@@ -96,10 +96,10 @@ class Controller:
         # Set up the SBUS encoder and open the serial port
         #-----------------------------------------------------------------------
         self.encoder = SBUSEncoder()
-        self.port = serial.Serial(tty_file, baudrate=int(100000),
+        self.port = serial.Serial(tty_file, baudrate=int(100000*1.57),
                                   parity=serial.PARITY_EVEN,
-                                  stopbits=serial.STOPBITS_TWO)
-
+                                  stopbits=serial.STOPBITS_TWO,
+                                  rtscts = True)
     # #---------------------------------------------------------------------------
     # def startService(self):
     #     self.log.info('Starting controller')
@@ -124,5 +124,10 @@ controller = Controller()
 
 while 1:
 
-    controller.send_sbus_msg()
+    for i in range(25):
+        #controller.send_sbus_msg()
+        controller.port.write(b'\x0F')
+        while(controller.port.out_waiting != 0):
+            pass
+        #controller.port.write(b'\x0F')
     time.sleep(0.07)
