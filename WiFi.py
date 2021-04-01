@@ -95,7 +95,12 @@ class Client(WiFi):
     def __init__(self, host, port=7777): # Tested
         super().__init__("client", host, port)
         # Connect to the Server
-        self.socket.connect((self.host, self.port))
+        while True:
+            try:
+                self.socket.connect((self.host, self.port))
+                break
+            except ConnectionError:
+                print("Can't connect to the robot")
 
         # Setup Listener and Sender
         super().setupAgents()
