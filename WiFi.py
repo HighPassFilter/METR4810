@@ -1,12 +1,11 @@
 ''' This library provides the Robot and Ground Station class with the ability to communicate with each other'''
-
-import socket
-from queue import Queue
 import logging
+import socket
+from queue import Queue, Empty
 import threading
 
 # Data logger setup
-logging.basicConfig(filename='example.log', level=logging.WARNING)
+logging.basicConfig(level=logging.WARNING)
 
 class WiFi():
     def __init__(self, identity, host, port=7777): # Tested
@@ -21,8 +20,7 @@ class WiFi():
         try:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             print("Socket created")
-            #s.connect((self.host, self.port))
-            #print("HI")
+
         except IOError:
             logging.error("Cannot create socket")
         
@@ -58,8 +56,8 @@ class WiFi():
         self.sender.isShutDown = 1
 
         # Wait for agents to shutdown
+        self.listener.join()
         self.sender.join()
-
         # Close the socket
         self.socket.close()
         logging.info("Closing connection on %s", self.identity)
@@ -75,7 +73,6 @@ class Server(WiFi):
 
         # Listen for a connection
         self.socket.listen()
-
         # Accept the connection from client
         conn, addr = self.socket.accept()
         logging.info("Server connected to %s", addr)
@@ -139,8 +136,10 @@ class Listener(Agent):
     def run(self):
         data = ""
         msg = ""
+        temp = ""
         bytesReceived = 0
         fragmented = 0
+        frag_protocol = 0
         print("Listener here")
         while self.isShutDown == 0:
 
@@ -157,21 +156,40 @@ class Listener(Agent):
                 for data in lines:
                     if fragmented == 0:
                         packet = data.split("_")
-                        msg = packet[1]
-                        
-                        # Check for data fragmentation
-                        if int(packet[0]) != len(packet[1]):
-                            # Look for the next line and combine it with the current packet
-                            fragmented = 1
+                        print(packet)
+                        # Remove empty packet
+                        if '' in packet:
+                            pass
                         else:
-                            # Sent the message to the device
-                            self.queue.put(msg)
+                            # Check for data fragmentation
+                            if len(packet) == 2:
+                                msg = packet[1]
+                                
+                                # Check for data fragmentation
+                                if int(packet[0]) != len(packet[1]):
+                                    # Look for the next line and combine it with the current packet
+                                    fragmented = 1
+                                else:
+                                    # Sent the message to the device
+                                    self.queue.put(msg)
+                            else:
+                                temp = packet[0]
+                                frag_protocol = 1
+                                fragmented = 1
 
+                    # Handle fragmentation
                     else:
-                        # Combine data fragments
-                        msg += data
-                        fragmented = 0
+                        if frag_protocol == 1:
+                            # Second element will contain our message
+                            msg = packet[1]
+                            frag_protocol = 0
+                            
+                        else:
+                            # Combine data fragments
+                            msg += data
+                            
                         self.queue.put(msg)
+                        fragmented = 0
 
             except socket.timeout:
                 pass
@@ -196,14 +214,14 @@ class Sender(Agent):
 
             try:
                 # Wait for data from 
-                data = self.queue.get(False)
+                data = self.queue.get()
 
                 # Add length of message and delimitter
                 data = str(len(data)) + "_" + data + ";"
 
                 # Send the data out via the socket
                 self.socket.sendall(str.encode(data))
-            except socket.timeout:
+            except Empty:
                 pass
             except Exception as e:
                 # Report any errors and exit

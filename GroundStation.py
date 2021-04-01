@@ -24,7 +24,7 @@ class GroundStation():
 
     def shutDown(self):
         self.client.closeConnection()
-        self.process.join()
+        self.guiListener.shutDownGUIListener()
 
     def command(self, option, available):
         # Verify that the available options was selected
@@ -74,7 +74,7 @@ class GroundStation():
 
         # Move to descent state
         if self.state.shutDown == 1:
-            return
+            self.shutDown()
         elif self.state.descent == 1:
             self.stateDescent()
         elif self.state.abortOptions == 1:
@@ -194,5 +194,7 @@ class GUIListener(Thread):
                 pass
         return msg
        
-        
+    def shutDownGUIListener(self):
+        print("GUI Listener shutting down..")
+        self.shutDown = 1
 
