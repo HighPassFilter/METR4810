@@ -12,24 +12,23 @@ class States():
         self.reset = 0
 
         # Available options for each state
-        self.setupOptions = [1, 4]
-        self.readyOptions = [2, 3, 4]
-        self.descentOptions = [3, 4]
-        self.abortOptions = [4]
-
+        self.setupOptions = [1, 4, 5]
+        self.readyOptions = [2, 3, 4, 5]
+        self.descentOptions = [3, 4, 5]
+        self.abortOptions = [4, 5]
 
     def notReady(self):
         # Option 1 and 3
-        return self.lockIn == 0 and self.shutDown == 0
+        return self.lockIn == 0 and self.shutDown == 0 and self.reset == 0
 
     def notDescent(self):
         # Option 2, 3 and 4
-        return self.descent == 0 and self.abort == 0 and self.shutDown == 0
+        return self.descent == 0 and self.abort == 0 and self.shutDown == 0 and self.reset == 0
 
     def toDescent(self):
         # Option 3 and 4
-        return self.abort == 0 and self.touchdown == 0 and self.shutDown == 0
+        return  self.touchdown == 0 and self.abort == 0 and self.shutDown == 0 and self.reset == 0 # Not sure if we want to be able to shut down here
 
-    def toStopAbort(self):
+    def toAbort(self):
         # Option 4
-        return self.touchdown == 0 and self.shutDown == 0
+        return self.touchdown == 0 and self.shutDown == 0 and self.reset == 0
