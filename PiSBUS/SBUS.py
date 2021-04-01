@@ -1,8 +1,8 @@
 #-------------------------------------------------------------------------------
-# Author: Lukasz Janyst <lukasz@jany.st>
-# Date:   06.03.2018
+# Author: Connor Raggatt    
+# Date:   1/04/2021
 #-------------------------------------------------------------------------------
-# This file is part of PiPilot.
+# Code is based on source from PiPilot by Lukasz Janyst <lukasz@jany.st>
 #
 # PiPilot is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -100,19 +100,20 @@ class Controller:
                                   parity=serial.PARITY_EVEN,
                                   stopbits=serial.STOPBITS_TWO,
                                   rtscts = True)
-    # #---------------------------------------------------------------------------
-    # def startService(self):
-    #     self.log.info('Starting controller')
-    #     self.sbus_loop.start(0.07)
-
-    # #---------------------------------------------------------------------------
-    # def stopService(self):
-    #     self.log.info('Stopping controller')
-    #     self.sbus_loop.stop()
 
     #---------------------------------------------------------------------------
     def send_sbus_msg(self):
-        self.port.write(self.encoder.get_data())
+        #-----------------------------------------------------------------------
+        # Get the data to send
+        #-----------------------------------------------------------------------
+        data = self.encoder.get_data()
+        #-----------------------------------------------------------------------
+        # Send it line by line so that serial doesn't overlap
+        #-----------------------------------------------------------------------
+        for byte in range(len(data)):
+            self.port.write(byte)
+            while(controller.port.out_waiting != 0):
+                pass
 
     #---------------------------------------------------------------------------
     def update_channel(self, channel, value):
@@ -124,10 +125,5 @@ controller = Controller()
 
 while 1:
 
-    for i in range(25):
-        #controller.send_sbus_msg()
-        controller.port.write(b'\x0F')
-        while(controller.port.out_waiting != 0):
-            pass
-        #controller.port.write(b'\x0F')
+    controller.send_sbus_msg()
     time.sleep(0.07)
