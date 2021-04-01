@@ -52,36 +52,43 @@ class GroundStation():
                 print("Shutting system down")
                 self.client.sendData("shutdown")
                 self.state.shutDown = 1
+        else:
+            print("Invalid command!")
 
     def receiveRobotData(self):
         data = self.client.receiveData()
         return self.client.unpackData(data)
 
     def stateHardSetup(self):
-        print("Please press 1 to lock in the servo or 4 to shutdown: ")
+        print("Lock in: 1, Shutdown: 4, Reset: 5, :")
 
         while self.state.notReady():
             # Handle option and commands from user
-            self.optionHandler(self.state.setupOptions)        
+            self.optionHandler(self.state.setupOptions)       
 
         # Move to ready state
         self.stateReady()
 
     def stateReady(self):
-        print("Please press 2 to release the robot, 3 to abort or 4 to shutdown: ")
+        print("Descent: 2, Abort: 3, Shutdown: 4, Reset: 5, :")
         while self.state.notDescent():
             self.optionHandler(self.state.readyOptions)
 
-        # Move to descent state
+        # Go to the next state
         if self.state.shutDown == 1:
             self.shutDown()
+
+        elif self.state.reset == 1:
+            self.reset()
+
+        elif self.state.abort == 1:
+            self.stateAbort()
+            
         elif self.state.descent == 1:
             self.stateDescent()
-        elif self.state.abortOptions == 1:
-            self.stateAbort()
 
     def stateDescent(self):
-        print("Please press 3 to abort, 4 to shutdown or wait for robot to touchdown to restart: ")
+        print("Wait for touchdown to restart, Abort: 3, Shutdown: 4, Reset: 5, :")
 
         while self.state.toDescent(): 
             self.optionHandler(self.state.descentOptions)
@@ -102,7 +109,7 @@ class GroundStation():
             self.tele_pipe.send(data)
 
         # Save the sensor data as a csv file
-        print(self.sensorData)
+        #print(self.sensorData)
         df = pd.DataFrame(self.sensorData)
         df = df.T
         df.columns = ["TS", "Temperature", "Orientation", "Acceleration", "Pressure"]
@@ -110,22 +117,38 @@ class GroundStation():
         filename = "sensor_" + str(date.month) + "_" + str(date.day) + "_" + str(date.hour) + "_" +str(date.minute) + "_" + str(date.second) + ".csv"
         df.to_csv(filename, index=False)
 
-        # Move to ready state # Need to properly trigger switch as well
+        # Go to the next state
         self.state.descent = 0
-        self.stateReady()
+        if self.state.shutDown == 1:
+            self.shutDown()
+
+        elif self.state.reset == 1:
+            self.reset()
+
+        elif self.state.abort == 1:
+            self.stateAbort()
+            
+        elif self.state.touchdown == 1:
+            self.stateReady()
 
     def stateAbort(self):
         # Command the Atmega128 to abort
-        print("Please press 4 to shutdown or wait for robot to touchdown to restart: ")
+        print("Wait for touchdown to restart, Shutdown: 4, Reset: 5, :")
         while self.toStopAbort():
             # Do we want to continue plotting data here?
             # Check for touchdown status being received
             self.optionHandler(self.state.abortOptions)
 
-        # Move to Hardware Setup State
-        self.state.lockIn = 0
+        # Go to the next state
         self.state.abort = 0
-        self.stateHardSetup()
+        if self.state.shutDown == 1:
+            self.shutDown()
+
+        elif self.state.reset == 1:
+            self.reset()
+
+        elif self.state.touchdown == 1:
+            self.stateReady()
 
     def stateReset(self):
         # System in reset
@@ -163,7 +186,7 @@ def telemetryProcess(groundStation):
         groundStation.state.connected = 1
 
         # Begin the state machine
-        groundStation.stateHardSetup()
+        groundStation.stateReady()
 
     except Exception as e:
         print(e)

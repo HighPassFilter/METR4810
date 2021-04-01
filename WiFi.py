@@ -213,7 +213,7 @@ class Sender(Agent):
         while self.isShutDown == 0:
 
             try:
-                # Wait for data from 
+                # Wait for data from
                 data = self.queue.get(False)
 
                 # Add length of message and delimitter
@@ -227,6 +227,16 @@ class Sender(Agent):
                 # Report any errors and exit
                 print(e)
                 self.isShutDown = 1
+
+        # Send last command
+        if not self.queue.empty():
+            data = self.queue.get()
+
+            # Add length of message and delimitter
+            data = str(len(data)) + "_" + data + ";"
+
+            # Send the data out via the socket
+            self.socket.sendall(str.encode(data))
 
         print("Sender shutting down")
 
