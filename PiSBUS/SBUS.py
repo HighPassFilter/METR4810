@@ -98,20 +98,20 @@ class Controller:
         self.encoder = SBUSEncoder()
         self.port = serial.Serial(tty_file, baudrate=int(100000*1.57),
                                   parity=serial.PARITY_EVEN,
-                                  stopbits=serial.STOPBITS_TWO,
-                                  rtscts = True)
-
+                                  stopbits=serial.STOPBITS_TWO)
     #---------------------------------------------------------------------------
     def send_sbus_msg(self):
         #-----------------------------------------------------------------------
         # Get the data to send
         #-----------------------------------------------------------------------
         data = self.encoder.get_data()
+        print(len(data), data)
         #-----------------------------------------------------------------------
         # Send it line by line so that serial doesn't overlap
         #-----------------------------------------------------------------------
         for byte in range(len(data)):
-            self.port.write(byte)
+            print(type(data[byte]), data[byte])
+            self.port.write(data[byte])
             while(controller.port.out_waiting != 0):
                 pass
 
@@ -123,7 +123,25 @@ class Controller:
 
 controller = Controller()
 
-while 1:
+data = bytearray(25)
+data = controller.encoder.get_data()
 
-    controller.send_sbus_msg()
+for byte in range(len(data)):
+    data[byte] = 100
+
+print(len(data), data)
+print(range(len(data)))
+
+controller.port.write(data)
+time.sleep(0.07)
+
+for byte in range(len(data)-1):
+    print(data[byte])
+    controller.port.write(bytes([data[byte]]))
+    while(controller.port.out_waiting != 0):
+        pass
+
+while 1:
+    controller.port.write(b'\xFF')
+    #controller.send_sbus_msg()
     time.sleep(0.07)
