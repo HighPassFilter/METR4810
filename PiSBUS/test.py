@@ -1,15 +1,8 @@
 import serial
+import time
 
-port = serial.Serial('/dev/ttyAMA0', baudrate=int(100000),
-                            parity=serial.PARITY_EVEN,
-                            stopbits=serial.STOPBITS_TWO)
-data = bytearray(25)
+port = serial.Serial('/dev/ttyAMA0', baudrate=int(115200))
 
-print(len(data))
-
-for byte in range(len(data)):
-    data[byte] = 0xFF
-
-print(data)
-
-port.write(bytes([data]))
+port.write("#\r\n".encode())
+time.sleep(.500)
+port.write("save\r\n".encode())
