@@ -17,13 +17,15 @@ TAG_IDs    = [2,3,0]                # Tag we are looking for
 if __name__ == '__main__':
 
 
-    cam = cv2.VideoCapture(2)
+    cam = cv2.VideoCapture(0)
     detector = apriltag.Detector(apriltag.DetectorOptions(families=TAG))
     
 
     while cv2.waitKey(1) != 0x1b:
         
         ret, img = cam.read()
+        print(img.shape)
+        break
         greys = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         dets = detector.detect(greys)
 

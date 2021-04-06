@@ -15,7 +15,8 @@ K = np.array([[fx, 0, cx], [0, fy, cy], [0, 0, 1]])
 def get_rot_and_trans():
     # initialize the camera and grab a reference to the raw camera capture
     camera = PiCamera()
-    rawCapture = PiRGBArray(camera)
+    camera.resolution = (640, 480)
+    rawCapture = PiRGBArray(camera, size=(640, 480))
     # allow the camera to warmup
     time.sleep(0.1)
     # grab an image from the camera
@@ -26,8 +27,9 @@ def get_rot_and_trans():
     
     detector = apriltag.Detector()
     print("hit2")
-    #detection = detector.detect(grey)
-    #print(detection)
+    
+    detection = detector.detect(grey)
+    print(detection)
     #if detection.hamming <= 2:
         # We have found an april tag
         # Compute required information from it
