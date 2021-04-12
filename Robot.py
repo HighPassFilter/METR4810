@@ -1,102 +1,163 @@
 from WiFi import Server
 import sys
 import numpy as np
+from StateMachine import States
 
 
 
 class Robot():
     def __init__(self):
         # Flag setup
-        self.abortFlag = 0
-        self.deployFlag = 0
-        self.touchdownFlag = 0
-
+        self.state = States()
         # Setup server
         self.server = Server()
 
         # Setup navigation
 
         # Setup pilot
-        
 
         # Setup sensors
+    
+    def stateReady(self): # NOT IN USE AT THE MOMENT
+        print("Robot ready for descent")
+        while self.state.notDescent():
+            # Listen to commands
+            self.receiveData()
+            
+        # Execute commands
+        # Control the servo to release the craft
 
+        # Go to the next state
+        if self.state.shutDown == 1:
+            self.shutDown()
+
+        elif self.state.reset == 1:
+            self.reset()
+
+        elif self.state.abort == 1:
+            self.stateAbort()
+            
+        elif self.state.descent == 1:
+            self.stateDescent()
         
+    def stateDescent(self):
+        print("Robot in descent mode")
+        # Turn on the thrusters?
 
+        # Generate dummy data
+        t = 0
+        gen = data_gen()
+
+        while self.state.toDescent():
+            # Collect data from sensors
+            try:
+                (t, y1, y2) = next(gen)
+            except Exception as e:
+                t += 0.05
+                y1 = 0
+                y2 = 0
+
+            # Store inflight data(?)
+
+            # Send the data to the ground station
+            #self.sendData("Sensor", [np.round(t, 2), np.round(y1, 2), np.round(y2, 2), 1.01])
+            # Update robot state estimate
+
+            # Check touchdown
+
+            # Process the image
+
+            # Update the flight controller commands            
+
+            # Listen to commands
+            self.receiveData()
+            
+        # Execute commands
+        
+        # Go to the next state
+        self.state.descent = 0
+        if self.state.shutDown == 1:
+            self.shutDown()
+
+        elif self.state.reset == 1:
+            self.reset()
+
+        elif self.state.abort == 1:
+            self.stateAbort()
+            
+        elif self.state.touchdown == 1:
+            self.stateReady()
+
+    def stateAbort(self):
+        print("Robot in abort mode")
+        # Generate dummy data (to be removed)
+        t = 0
+        y1 = 0
+        y2 = 0
+        # Control the servo to unleash the parachute
+
+        while self.state.toAbort():
+            # Collect data from sensors(?)
+            t += 0.05
+            y1 += 0.01
+            y2 += 0.02
+
+            # Send the data to the ground station (?)
+            #self.sendData("Sensor", [np.round(t, 2), np.round(y1, 2), np.round(y2, 2), 1.01])
+            # Update the robot state estimate (?)
+
+            # Receive commands
+            self.receiveData()
+
+        # Go to the next state
+        self.state.abort = 0
+        if self.state.shutDown == 1:
+            self.shutDown()
+
+        elif self.state.reset == 1:
+            self.reset()
+
+        elif self.state.touchdown == 1:
+            self.stateReady()
+        
     def receiveData(self):
         try:
             message = self.server.receiveData()
             #print(message)
             if message == "abort":
-                self.abort()
+                print("Robot received abort command!")
+                self.state.abort = 1
             if message == "release":
-                self.release()
+                print("Robot received release command!")
+                self.state.descent = 1
             if message == "shutdown":
-                self.shutDown()
+                print("Robot received shutdown command!")
+                self.state.shutDown = 1
+            if message == "reset":
+                print("Robot received reset command!")
+                self.state.reset = 1
 
-            return message
+            #return message
         except:
             pass
 
     def sendData(self, dataType, data):
         data = self.server.packData(dataType, data)
-        print(data)
-        #server.sendData(data)
-
-        
+        #print(data)
+        self.server.sendData(data)       
 
     def shutDown(self):
         # TODO: Shut everything down
         print("Robot shutting down")
-        #sys.exit()
-        #self.server.closeConnection()
-
-    def release(self):
-        # TODO: Communicate with pilot to release the clamp
-        print("Robot received release command!")
-
-        # Start descending
-        self.deployFlag = 1
-        
+        self.server.closeConnection()
+    
+    def reset(self):
+        print("Robot resetting")
+        # Shutdown the wifi connection
+        self.server.closeConnection()
+        # Send the command to the pilot to reset
         
 
-    def abort(self):
-        # TODO: Turn off the thrusters, camera, sensors 
-        print("Robot received abort command!")
-        self.abortFlag = 1
-
-    def start(self):
-
-        while self.deployFlag == 0:
-            # Keep listening for commands
-            self.receiveData()
-
-        print("Robot starting to descent")
-        # Generate dummy data
-        gen = data_gen()
-
-        while self.touchdownFlag == 0:
-            # Listen to command from computer
-            
-            self.receiveData()
-            
-            # Abort if the abort command is given
-            if self.abortFlag == 1:
-                break
-                print("Robot aborted")
-
-
-            # Start collecting data from sensors
-            (t, y1, y2) = next(gen)
-
-            # Start sending robot data to computer
-            self.sendData("Sensor", [t, y1, y2, 1])
-
-        # Perform navigation computations?
-
-        # Send navigation output to pilot?
-
-        # 
 
 def data_gen():
     t = data_gen.t

@@ -1,12 +1,11 @@
 ''' This library provides the Robot and Ground Station class with the ability to communicate with each other'''
-
-import socket
-from queue import Queue
 import logging
+import socket
+from queue import Queue, Empty
 import threading
 
 # Data logger setup
-logging.basicConfig(filename='example.log', level=logging.WARNING)
+logging.basicConfig(level=logging.WARNING)
 
 class WiFi():
     def __init__(self, identity, host, port=7777): # Tested
@@ -21,13 +20,15 @@ class WiFi():
         try:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             print("Socket created")
-            #s.connect((self.host, self.port))
-            #print("HI")
+
         except IOError:
             logging.error("Cannot create socket")
         
 
     def setupAgents(self, socket=None):
+        # Make the socket non-blocking
+        self.socket.settimeout(1)
+
         # Assign socket connection
         if socket != None:
             conn = socket
@@ -55,8 +56,8 @@ class WiFi():
         self.sender.isShutDown = 1
 
         # Wait for agents to shutdown
-        self.sender.join()
-
+        self.listener.join()
+        self.sender.join() # Sender not shutting down
         # Close the socket
         self.socket.close()
         logging.info("Closing connection on %s", self.identity)
@@ -72,7 +73,6 @@ class Server(WiFi):
 
         # Listen for a connection
         self.socket.listen()
-
         # Accept the connection from client
         conn, addr = self.socket.accept()
         logging.info("Server connected to %s", addr)
@@ -95,7 +95,12 @@ class Client(WiFi):
     def __init__(self, host, port=7777): # Tested
         super().__init__("client", host, port)
         # Connect to the Server
-        self.socket.connect((self.host, self.port))
+        while True:
+            try:
+                self.socket.connect((self.host, self.port))
+                break
+            except ConnectionError:
+                print("Can't connect to the robot")
 
         # Setup Listener and Sender
         super().setupAgents()
@@ -136,48 +141,69 @@ class Listener(Agent):
     def run(self):
         data = ""
         msg = ""
+        temp = ""
         bytesReceived = 0
         fragmented = 0
+        frag_protocol = 0
         print("Listener here")
-        while True:
-            if self.isShutDown == 0:
-                try:
-                    # Receive data out via the socket
-                    data = self.socket.recv(4096)
-                    data = data.decode('UTF-8')
-                    
-                    # Check how many lines of messages have been sent
-                    lines = data.split(";")
-                    bytesReceived += len(lines)
+        while self.isShutDown == 0:
 
-                    # Send the data to device
-                    for data in lines:
-                        if fragmented == 0:
-                            packet = data.split("_")
-                            msg = packet[1]
-                            
+            try:
+                # Receive data out via the socket
+                data = self.socket.recv(4096)
+                data = data.decode('UTF-8')
+                
+                # Check how many lines of messages have been sent
+                lines = data.split(";")
+                bytesReceived += len(lines)
+
+                # Send the data to device
+                for data in lines:
+                    if fragmented == 0:
+                        packet = data.split("_")
+                        #print(packet)
+                        # Remove empty packet
+                        if '' in packet:
+                            pass
+                        else:
                             # Check for data fragmentation
-                            if int(packet[0]) != len(packet[1]):
-                                # Look for the next line and combine it with the current packet
-                                fragmented = 1
+                            if len(packet) == 2:
+                                msg = packet[1]
+                                
+                                # Check for data fragmentation
+                                if int(packet[0]) != len(packet[1]):
+                                    # Look for the next line and combine it with the current packet
+                                    fragmented = 1
+                                else:
+                                    # Sent the message to the device
+                                    self.queue.put(msg)
                             else:
-                                # Sent the message to the device
-                                self.queue.put(msg)
+                                temp = packet[0]
+                                frag_protocol = 1
+                                fragmented = 1
 
+                    # Handle fragmentation
+                    else:
+                        if frag_protocol == 1:
+                            # Second element will contain our message
+                            msg = packet[1]
+                            frag_protocol = 0
+                            
                         else:
                             # Combine data fragments
                             msg += data
-                            fragmented = 0
-                            self.queue.put(msg)
+                            
+                        self.queue.put(msg)
+                        fragmented = 0
 
-                except IOError:
-                    print("Connection lost")
-                except Exception as e:
-                    pass
+            except socket.timeout:
+                pass
+            except Exception as e:
+                # Report any errors and exit
+                print(e)
+                self.isShutDown = 1
 
-            else:
-                print("Listener shutting down")
-                break
+        print("Listener shutting down")
 
 class Sender(Agent):
     def __init__(self, conn):
@@ -189,24 +215,35 @@ class Sender(Agent):
     def run(self):
         data = ""
         print("Sender here")
-        while True:
-            if self.isShutDown == 0:
-                try:
-                    # Wait for data from 
-                    data = self.queue.get(False)
+        while self.isShutDown == 0:
 
-                    # Add length of message and delimitter
-                    data = str(len(data)) + "_" + data + ";"
+            try:
+                # Wait for data from
+                data = self.queue.get(False)
 
-                    # Send the data out via the socket
-                    self.socket.sendall(str.encode(data))
-                except IOError:
-                    print("Connection lost")
-                except Exception:
-                    pass
-            else:
-                print("Sender shutting down")
-                break
+                # Add length of message and delimitter
+                data = str(len(data)) + "_" + data + ";"
+
+                # Send the data out via the socket
+                self.socket.sendall(str.encode(data))
+            except Empty:
+                pass
+            except Exception as e:
+                # Report any errors and exit
+                print(e)
+                self.isShutDown = 1
+
+        # Send last command
+        if not self.queue.empty():
+            data = self.queue.get()
+
+            # Add length of message and delimitter
+            data = str(len(data)) + "_" + data + ";"
+
+            # Send the data out via the socket
+            self.socket.sendall(str.encode(data))
+
+        print("Sender shutting down")
 
 
 
