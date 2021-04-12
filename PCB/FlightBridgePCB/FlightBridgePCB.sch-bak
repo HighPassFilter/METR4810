@@ -442,9 +442,9 @@ Text GLabel 1350 3600 0    50   Output ~ 0
 ABORT
 Text GLabel 1350 3700 0    50   Output ~ 0
 SUPERVISOR_RESET
-Text GLabel 6500 2100 2    50   Input ~ 0
+Text GLabel 6500 3900 2    50   Input ~ 0
 ABORT
-Text GLabel 6500 2200 2    50   Input ~ 0
+Text GLabel 6500 4000 2    50   Input ~ 0
 SUPERVISOR_RESET
 $Comp
 L Device:LED D5
