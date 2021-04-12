@@ -52,6 +52,11 @@ class GroundStation():
                 print("Shutting system down")
                 self.client.sendData("shutdown")
                 self.state.shutDown = 1
+
+            elif option == 5:
+                print("Resetting the system")
+                self.client.sendData("reset")
+                self.state.reset = 1
         else:
             print("Invalid command!")
 
@@ -134,7 +139,7 @@ class GroundStation():
     def stateAbort(self):
         # Command the Atmega128 to abort
         print("Wait for touchdown to restart, Shutdown: 4, Reset: 5, :")
-        while self.toStopAbort():
+        while self.state.toAbort():
             # Do we want to continue plotting data here?
             # Check for touchdown status being received
             self.optionHandler(self.state.abortOptions)
@@ -150,14 +155,11 @@ class GroundStation():
         elif self.state.touchdown == 1:
             self.stateReady()
 
-    def stateReset(self):
+    def reset(self):
         # System in reset
+        self.shutDown()
         # Try to reconnect to the client
-        pass
-
-    def stateShutDown(self):
-        # Close all processes and threads
-        pass
+        
 
     def setupPipe(self, pipe):
         self.terminal.main_pipe = pipe

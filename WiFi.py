@@ -68,6 +68,7 @@ class Server(WiFi):
         super().__init__("server", "", port)
 
         # Bind the socket
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind((self.host, port))
         print("Socket bind complete")
 
@@ -77,7 +78,7 @@ class Server(WiFi):
         conn, addr = self.socket.accept()
         logging.info("Server connected to %s", addr)
 
-        # Setup Listener and Sender 
+        # Setup Listener and Sender
         super().setupAgents(conn)
 
     @staticmethod
