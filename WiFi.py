@@ -84,11 +84,22 @@ class Server(WiFi):
     @staticmethod
     def packData(dataType, data): 
         if dataType == "Sensor":
-            temperature = data[0]
-            orientation = data[1]
-            acceleration = data[2]
-            pressure = data[3]
-            return dataType + ":" + str(temperature) + "," + str(orientation) + "," + str(acceleration) + "," + str(pressure)
+            #TOF = data[0]
+            #acc_x = data[1]
+            #acc_y = data[2]
+            #acc_z = data[3]
+            #yaw = data[4]
+            #pitch = data[5]
+            #roll = data[6]
+            #temperature = data[7]
+            #pressure = data[8]
+
+            # Build message string
+            msg = dataType + ":"
+            for value in data:
+                msg += str(value) + ","
+
+            return  msg
         else:
             return dataType + ":" + data
 
