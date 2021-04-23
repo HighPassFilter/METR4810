@@ -62,7 +62,7 @@ class Robot():
             
             
             # Send the data to the ground station (Every 0.2 seconds?)
-            if linAcc[0] != None and ori[0] != None and temp != None and pres != None
+            if linAcc[0] != None and ori[0] != None and temp != None and pres != None:
                 self.sendData("Sensor", [TOF, np.round(linAcc[0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
             
             # Update robot state estimate
