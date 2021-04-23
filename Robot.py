@@ -49,6 +49,7 @@ class Robot():
 
         # Generate dummy data
         start = time.time()
+        prev_print = start
 
         while self.state.toDescent():
             # Collect data from sensors
@@ -62,9 +63,10 @@ class Robot():
             
             
             # Send the data to the ground station (Every 0.2 seconds?)
-            if linAcc[0] != None and ori[0] != None and temp != None and pres != None:
-                self.sendData("Sensor", [TOF, np.round(linAcc[0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
-            
+            if time.time() - prev_print > 0.1:
+                if linAcc[0] != None and ori[0] != None and temp != None and pres != None:
+                    self.sendData("Sensor", [TOF, np.round(linAcc[0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
+                    prev_print = time.time()
             # Update robot state estimate
 
             # Check touchdown
