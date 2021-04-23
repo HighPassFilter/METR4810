@@ -1,4 +1,4 @@
-19082546775711113
+19085784233415425
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -50882,6 +50882,20 @@ Astro
 0
 0
 0
+FlightBridgePCB
+ELECTRICAL_Connection
+
+
+0
+3
+3
+FlightBridgePCB
+EXTERNAL_TELEM
+
+
+0
+3
+3
 Fuse
 Fuse_0402_1005Metric
 Fuse SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: http://www.tortai-tech.com/upload/download/2011102023233369053.pdf), generated with kicad-footprint-generator
