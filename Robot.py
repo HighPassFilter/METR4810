@@ -1,6 +1,8 @@
 from WiFi import Server
 import sys
+import time
 import numpy as np
+from Telemetry import Telemetry
 from StateMachine import States
 
 
@@ -17,6 +19,7 @@ class Robot():
         # Setup pilot
 
         # Setup sensors
+        self.tele = Telemetry()
     
     def stateReady(self): # NOT IN USE AT THE MOMENT
         print("Robot ready for descent")
@@ -45,22 +48,21 @@ class Robot():
         # Turn on the thrusters?
 
         # Generate dummy data
-        t = 0
-        gen = data_gen()
+        start = time.time()
 
         while self.state.toDescent():
             # Collect data from sensors
-            try:
-                (t, y1, y2) = next(gen)
-            except Exception as e:
-                t += 0.05
-                y1 = 0
-                y2 = 0
+            linAcc = self.tele.getLinearAcceleration()
+            ori = self.tele.getOrientation()
+            temp = self.tele.getTemperature()
+            pres = self.tele.getPressure()
+            TOF = time.time() - start
 
             # Store inflight data(?)
-
-            # Send the data to the ground station
-            #self.sendData("Sensor", [np.round(t, 2), np.round(y1, 2), np.round(y2, 2), 1.01])
+            
+            # Send the data to the ground station (Every 0.2 seconds?)
+            self.sendData("Sensor", [start - end, np.round(linAcc[0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
+            
             # Update robot state estimate
 
             # Check touchdown
