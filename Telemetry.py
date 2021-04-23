@@ -12,16 +12,16 @@ class Telemetry():
         i2c = I2C(SCL, SDA)
         self.sensor = adafruit_bno055.BNO055_I2C(i2c)
 
-    def getLinearAcceleration:
+    def getLinearAcceleration(self):
         return self.sensor.linear_acceleration # Do we need raw acceleration or linear acceleration for the final demo?
     
-    def getOrientation:
+    def getOrientation(self):
         return self.sensor.euler
 
-    def getTemperature:
+    def getTemperature(self):
         return 0
 
-    def getPressure:
+    def getPressure(self):
         return 10
 
 
