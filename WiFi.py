@@ -97,7 +97,11 @@ class Server(WiFi):
             # Build message string
             msg = dataType + ":"
             for value in data:
-                msg += str(value) + ","
+                msg += str(value)
+
+                # Don't add comas to the last value
+                if value != data[len(data) - 1]:
+                    msg += ","
 
             return  msg
         else:
@@ -173,7 +177,7 @@ class Listener(Agent):
                 for data in lines:
                     if fragmented == 0:
                         packet = data.split("_")
-                        #print(packet)
+                        print(packet)
                         # Remove empty packet
                         if '' in packet:
                             pass
