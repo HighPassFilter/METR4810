@@ -31,10 +31,7 @@ class UserInterface():
         self.terminal.start()
 
     def startGraph(self, groundStation):
-        #while True:
-        #    print(self.main_pipe.poll())
-        #    time.sleep(0.5)
-        ani = animation.FuncAnimation(fig, run, fargs=(self.main_pipe,) ,interval=1, repeat=False)
+        ani = animation.FuncAnimation(fig, run, fargs=(self.main_pipe,) ,interval=10, repeat=False, blit=True)
         plt.show()
 
 def run(frame, pipe):
@@ -50,6 +47,7 @@ def run(frame, pipe):
     xdata.append(data[0])
     y1data.append(data[1])
     y2data.append(data[2])
+
 
     # axis limits checking. Same as before, just for both axes
     for ax in [ax1, ax2]:
@@ -73,14 +71,20 @@ class UserInput(Thread):
         Thread.__init__(self)
 
     def run(self):
-        host = "192.168.137.208" #input("Please enter the robot's host ip address: ")
+        host = "192.168.0.9" #input("Please enter the robot's host ip address: ")
         
         # Return host
         self.main_pipe.send(host)
         #print(self.main_pipe.recv())
         while True:
-            option = input("Please enter your command: ")
-            # Return command
-            self.main_pipe.send(int(option))
-            if int(option) == 4:
-                break
+            try:
+                option = input("Please enter your command: ")
+                # Check if option is an integer
+                # Return command
+                self.main_pipe.send(int(option))
+                if int(option) == 4:
+                    break
+            except ValueError:
+                print("Invalid command!")
+            except Exception:
+                print(e)

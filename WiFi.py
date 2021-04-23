@@ -177,7 +177,6 @@ class Listener(Agent):
                 for data in lines:
                     if fragmented == 0:
                         packet = data.split("_")
-                        print(packet)
                         # Remove empty packet
                         if '' in packet:
                             pass
