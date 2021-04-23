@@ -18,4 +18,10 @@ class Telemetry():
     def getOrientation:
         return self.sensor.euler
 
+    def getTemperature:
+        return 0
+
+    def getPressure:
+        return 10
+
 
