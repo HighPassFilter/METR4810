@@ -61,7 +61,7 @@ class Robot():
             # Store inflight data(?)
             
             # Send the data to the ground station (Every 0.2 seconds?)
-            self.sendData("Sensor", [start - end, np.round(linAcc[0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
+            self.sendData("Sensor", [TOF, np.round(linAcc[0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
             
             # Update robot state estimate
 
