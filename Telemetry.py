@@ -25,9 +25,9 @@ class Telemetry():
         return self.bno055.euler
 
     def getTemperature(self):
-        return bmp280.temperature
+        return self.bmp280.temperature
 
     def getPressure(self):
-        return bmp280.pressure
+        return self.bmp280.pressure
 
 
