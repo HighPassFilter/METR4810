@@ -16,7 +16,7 @@ class Telemetry():
         self.bno055 = adafruit_bno055.BNO055_I2C(i2c)
 
         # Setup the temp + pressure sensor
-        self.bmp280 = adafruit_bmp280.Adafruit_BMP280_I2C(i2c)
+        self.bmp280 = adafruit_bmp280.Adafruit_BMP280_I2C(i2c, address = 0x76)
 
     def getLinearAcceleration(self):
         return self.bno055.linear_acceleration # Do we need raw acceleration or linear acceleration for the final demo?
