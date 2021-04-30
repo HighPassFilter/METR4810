@@ -1,9 +1,12 @@
 from WiFi import Server
 import sys
 import time
+import datetime
 import numpy as np
+import pandas as pd
 from Telemetry import Telemetry
 from StateMachine import States
+from PiSBUS.SBUS import Controller
 
 
 
@@ -17,9 +20,13 @@ class Robot():
         # Setup navigation
 
         # Setup pilot
+        
+        # Setup Flight controller
+        self.controller = Controller()
 
         # Setup sensors
         self.tele = Telemetry()
+        self.data_storage = [[],[],[],[]]
     
     def stateReady(self): # NOT IN USE AT THE MOMENT
         print("Robot ready for descent")
@@ -59,14 +66,15 @@ class Robot():
             pres = self.tele.getPressure()
             TOF = time.time() - start
 
-            # Store inflight data(?)
-            
+            # Store inflight acceleration data
+            data_storage[1].append(linAcc)
             
             # Send the data to the ground station (Every 0.2 seconds?)
             if time.time() - prev_print > 0.1:
                 if linAcc[0] != None and ori[0] != None and temp != None and pres != None:
                     self.sendData("Sensor", [TOF, np.round(linAcc[0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
                     prev_print = time.time()
+
             # Update robot state estimate
 
             # Check touchdown
@@ -79,6 +87,12 @@ class Robot():
             self.receiveData()
             
         # Execute commands
+        # Save the data (To be removed during actual flight)
+        df = pd.DataFrame(data_storage)
+        df = df.T
+        date = datetime.datetime.now()
+        filename = "sensor_" + str(date.month) + "_" + str(date.day) + "_" + str(date.hour) + "_" +str(date.minute) + "_" + str(date.second) + ".csv"
+        df.to_csv(filename, index=False)
         
         # Go to the next state
         self.state.descent = 0
@@ -163,7 +177,7 @@ class Robot():
         self.server.closeConnection()
         # Send the command to the pilot to reset
         
-
+    def 
 
 def data_gen():
     t = data_gen.t
