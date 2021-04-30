@@ -176,8 +176,7 @@ class Robot():
         # Shutdown the wifi connection
         self.server.closeConnection()
         # Send the command to the pilot to reset
-        
-    def 
+
 
 def data_gen():
     t = data_gen.t
