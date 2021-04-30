@@ -22,7 +22,7 @@ class Robot():
         # Setup pilot
         
         # Setup Flight controller
-        self.controller = Controller()
+        # self.controller = Controller()
 
         # Setup sensors
         self.tele = Telemetry()
