@@ -67,7 +67,7 @@ class Robot():
             TOF = time.time() - start
 
             # Store inflight acceleration data
-            data_storage[1].append(linAcc)
+            self.data_storage[1].append(linAcc)
             
             # Send the data to the ground station (Every 0.2 seconds?)
             if time.time() - prev_print > 0.1:
@@ -88,7 +88,7 @@ class Robot():
             
         # Execute commands
         # Save the data (To be removed during actual flight)
-        df = pd.DataFrame(data_storage)
+        df = pd.DataFrame(self.data_storage)
         df = df.T
         date = datetime.datetime.now()
         filename = "sensor_" + str(date.month) + "_" + str(date.day) + "_" + str(date.hour) + "_" +str(date.minute) + "_" + str(date.second) + ".csv"
