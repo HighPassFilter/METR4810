@@ -67,7 +67,10 @@ class Robot():
             TOF = time.time() - start
 
             # Store inflight acceleration data
-            self.data_storage[1].append(linAcc)
+            self.data_storage[0].append(TOF)
+            self.data_storage[1].append(linAcc[0])
+            self.data_storage[2].append(linAcc[1])
+            self.data_storage[3].append(linAcc[2])
             
             # Send the data to the ground station (Every 0.2 seconds?)
             if time.time() - prev_print > 0.1:
