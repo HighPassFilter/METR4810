@@ -16,6 +16,9 @@ class Telemetry():
             self.bno055 = adafruit_bno055.BNO055_I2C(i2c)
             self.bno055_isPresent = True
 
+            # Set the BNO055 to IMUPlus Mode
+            self.bno055.mode = adafruit_bno055.IMUPLUS_MODE
+
         except Exception:
             self.bno055_isPresent = False
         
@@ -26,6 +29,7 @@ class Telemetry():
         except Exception:
             # Only IMU connected over I2C
             self.bmp280_isPresent = False
+
 
     def getLinearAcceleration(self):
         if self.bno055_isPresent:
