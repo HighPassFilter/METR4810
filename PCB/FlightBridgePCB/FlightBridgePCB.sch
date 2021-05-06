@@ -191,9 +191,9 @@ Wire Wire Line
 	5950 1150 6000 1150
 Wire Wire Line
 	5950 1100 5950 1150
-Text GLabel 6500 2550 2    50   BiDi ~ 0
+Text GLabel 5100 4050 0    50   BiDi ~ 0
 MOSI
-Text GLabel 6500 2650 2    50   BiDi ~ 0
+Text GLabel 5100 4250 0    50   BiDi ~ 0
 MISO
 Text GLabel 6500 2450 2    50   BiDi ~ 0
 SCK
@@ -214,90 +214,10 @@ Text GLabel 1350 2500 0    50   Output ~ 0
 UART_SBUS
 Text GLabel 1350 2600 0    50   Input ~ 0
 UART_TELEM_PI
-Text GLabel 5300 4150 0    50   Input ~ 0
+Text GLabel 5100 4150 0    50   Input ~ 0
 UART_SBUS
-Text GLabel 9550 1900 0    50   Input ~ 0
+Text GLabel 9550 1800 0    50   Input ~ 0
 UART_SBUS
-Text GLabel 9550 1800 0    50   Output ~ 0
-UART_TELEM_FC
-$Comp
-L Device:R R7
-U 1 1 606721A0
-P 9750 2700
-F 0 "R7" H 9820 2746 50  0000 L CNN
-F 1 "0" H 9820 2655 50  0000 L CNN
-F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 9680 2700 50  0001 C CNN
-F 3 "~" H 9750 2700 50  0001 C CNN
-	1    9750 2700
-	1    0    0    -1  
-$EndComp
-$Comp
-L Device:R R8
-U 1 1 60672D84
-P 9750 3000
-F 0 "R8" H 9820 3046 50  0000 L CNN
-F 1 "0" H 9820 2955 50  0000 L CNN
-F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 9680 3000 50  0001 C CNN
-F 3 "~" H 9750 3000 50  0001 C CNN
-	1    9750 3000
-	1    0    0    -1  
-$EndComp
-Text GLabel 9600 2850 0    50   Output ~ 0
-UART_TELEM
-Wire Wire Line
-	9600 2850 9750 2850
-Connection ~ 9750 2850
-Text Notes 9200 2350 0    50   ~ 0
-Telemetry Selector\n
-Text GLabel 10050 2550 2    50   Input ~ 0
-UART_TELEM_FC
-Wire Wire Line
-	9750 2550 10050 2550
-$Comp
-L Connector_Generic:Conn_01x03 J4
-U 1 1 6067E30D
-P 9550 3800
-F 0 "J4" H 9630 3842 50  0000 L CNN
-F 1 "Conn_01x03" H 9630 3751 50  0000 L CNN
-F 2 "FlightBridgePCB:EXTERNAL_TELEM" H 9550 3800 50  0001 C CNN
-F 3 "~" H 9550 3800 50  0001 C CNN
-	1    9550 3800
-	1    0    0    -1  
-$EndComp
-Text Notes 9200 3400 0    50   ~ 0
-External Telemetry Input\n
-Text GLabel 9350 3900 0    50   Output ~ 0
-UART_TELEM_EXT
-$Comp
-L power:+5V #PWR0112
-U 1 1 6068215D
-P 9350 3700
-F 0 "#PWR0112" H 9350 3550 50  0001 C CNN
-F 1 "+5V" V 9365 3828 50  0000 L CNN
-F 2 "" H 9350 3700 50  0001 C CNN
-F 3 "" H 9350 3700 50  0001 C CNN
-	1    9350 3700
-	0    -1   -1   0   
-$EndComp
-$Comp
-L power:GND #PWR0113
-U 1 1 60682A5F
-P 9350 3800
-F 0 "#PWR0113" H 9350 3550 50  0001 C CNN
-F 1 "GND" V 9355 3672 50  0000 R CNN
-F 2 "" H 9350 3800 50  0001 C CNN
-F 3 "" H 9350 3800 50  0001 C CNN
-	1    9350 3800
-	0    1    1    0   
-$EndComp
-Text GLabel 10050 3150 2    50   Input ~ 0
-UART_TELEM_EXT
-Wire Wire Line
-	9750 3150 10050 3150
-Text GLabel 6500 4350 2    50   Input ~ 0
-UART_TELEM
-Text GLabel 5300 4250 0    50   Output ~ 0
-UART_TELEM_PI
 Text GLabel 1350 3600 0    50   Output ~ 0
 ABORT
 Text GLabel 6500 3250 2    50   Input ~ 0
@@ -517,17 +437,6 @@ Wire Wire Line
 	10350 5800 10350 5850
 Text GLabel 6500 1950 2    50   Output ~ 0
 ~POWER_EN~
-$Comp
-L Regulator_Linear:L78L33_TO92 U2
-U 1 1 607B052B
-P 2150 5500
-F 0 "U2" H 2150 5742 50  0000 C CNN
-F 1 "L78L33_TO92" H 2150 5651 50  0000 C CNN
-F 2 "Package_TO_SOT_THT:TO-92_Inline" H 2150 5725 50  0001 C CIN
-F 3 "http://www.st.com/content/ccc/resource/technical/document/datasheet/15/55/e5/aa/23/5b/43/fd/CD00000446.pdf/files/CD00000446.pdf/jcr:content/translations/en.CD00000446.pdf" H 2150 5450 50  0001 C CNN
-	1    2150 5500
-	1    0    0    -1  
-$EndComp
 $Comp
 L Device:C C3
 U 1 1 607B28FC
@@ -817,17 +726,6 @@ Wire Wire Line
 Wire Wire Line
 	1400 7250 1350 7250
 $Comp
-L Connector_Generic:Conn_01x04 J3
-U 1 1 608B8E7D
-P 9750 1700
-F 0 "J3" H 9830 1692 50  0000 L CNN
-F 1 "Conn_01x04" H 9830 1601 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Horizontal" H 9750 1700 50  0001 C CNN
-F 3 "~" H 9750 1700 50  0001 C CNN
-	1    9750 1700
-	1    0    0    -1  
-$EndComp
-$Comp
 L Connector:Raspberry_Pi_2_3 J1
 U 1 1 60669113
 P 2150 3400
@@ -938,4 +836,82 @@ F 3 "" H 3150 1850 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Connection ~ 3150 1850
+Wire Wire Line
+	5300 4150 5200 4150
+Wire Wire Line
+	5100 4050 5200 4050
+Wire Wire Line
+	5200 4050 5200 4150
+Connection ~ 5200 4150
+Wire Wire Line
+	5200 4150 5100 4150
+Wire Wire Line
+	5100 4250 5300 4250
+$Comp
+L Regulator_Linear:MCP1700-3302E_TO92 U2
+U 1 1 609851B3
+P 2150 5500
+F 0 "U2" H 2150 5258 50  0000 C CNN
+F 1 "MCP1700-3302E_TO92" H 2150 5349 50  0000 C CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline" H 2150 5300 50  0001 C CIN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/20001826D.pdf" H 2150 5500 50  0001 C CNN
+	1    2150 5500
+	1    0    0    1   
+$EndComp
+$Comp
+L Connector_Generic:Conn_01x03 J3
+U 1 1 609C188B
+P 9750 1700
+F 0 "J3" H 9830 1742 50  0000 L CNN
+F 1 "Conn_01x03" H 9830 1651 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Horizontal" H 9750 1700 50  0001 C CNN
+F 3 "~" H 9750 1700 50  0001 C CNN
+	1    9750 1700
+	1    0    0    -1  
+$EndComp
+Text GLabel 2950 2800 2    50   Output ~ 0
+SDA
+Text GLabel 2950 2900 2    50   Output ~ 0
+SCL
+Text Notes 9200 2300 0    50   ~ 0
+Pi I2C breakout\n\n
+$Comp
+L Connector_Generic:Conn_01x04 J4
+U 1 1 60A1AD24
+P 9750 2550
+F 0 "J4" H 9830 2542 50  0000 L CNN
+F 1 "Conn_01x04" H 9830 2451 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Horizontal" H 9750 2550 50  0001 C CNN
+F 3 "~" H 9750 2550 50  0001 C CNN
+	1    9750 2550
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3V3 #PWR0112
+U 1 1 60A1E0CF
+P 9550 2450
+F 0 "#PWR0112" H 9550 2300 50  0001 C CNN
+F 1 "+3V3" H 9565 2623 50  0000 C CNN
+F 2 "" H 9550 2450 50  0001 C CNN
+F 3 "" H 9550 2450 50  0001 C CNN
+	1    9550 2450
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR0113
+U 1 1 60A26F57
+P 9350 2550
+F 0 "#PWR0113" H 9350 2300 50  0001 C CNN
+F 1 "GND" H 9355 2377 50  0000 C CNN
+F 2 "" H 9350 2550 50  0001 C CNN
+F 3 "" H 9350 2550 50  0001 C CNN
+	1    9350 2550
+	0    1    -1   0   
+$EndComp
+Wire Wire Line
+	9550 2550 9350 2550
+Text GLabel 9550 2650 0    50   Input ~ 0
+SDA
+Text GLabel 9550 2750 0    50   Input ~ 0
+SCL
 $EndSCHEMATC
