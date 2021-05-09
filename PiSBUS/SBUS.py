@@ -118,16 +118,16 @@ class Controller:
         # self.encoder.set_channel(channel, int(scale * 2047))
         self.encoder.set_channel(channel,value)
 
-controller = Controller()
+# controller = Controller()
 
-controller.update_channel(10,2000)
+# controller.update_channel(10,2000)
 
-while True:
-    for channel in range(0,16):
-        for i in range(600,1500):
-            controller.update_channel(channel,i)
-            controller.send_sbus_msg()
-            time.sleep(0.001)
+# while True:
+#     for channel in range(0,16):
+#         for i in range(600,1500):
+#             controller.update_channel(channel,i)
+#             controller.send_sbus_msg()
+#             time.sleep(0.001)
 
 
 # for byte in range(len(data)-1):
