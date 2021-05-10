@@ -1,4 +1,5 @@
 from Robot import Robot
+import argparse
 
 # Create parser for putting robot in experiment mode
 gs_parser = argparse.ArgumentParser(description='Specify the mode of the computer -> Experiment(1), Demo(0)')
