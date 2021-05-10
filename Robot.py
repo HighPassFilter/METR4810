@@ -37,6 +37,8 @@ class Robot():
         # Execute commands
         # Control the servo to release the craft
 
+        # Obtain the global frame of reference
+
         # Go to the next state
         if self.state.shutDown == 1:
             self.shutDown()
@@ -65,6 +67,11 @@ class Robot():
             temp = self.tele.getTemperature()
             pres = self.tele.getPressure()
             TOF = time.time() - start
+
+            # Express the acceleration data in terms of world coordinate frame
+            R = euler_to_rotMat(ori[0], ori[1], ori[2])
+            linAcc = np.array([[linAcc[0]],[linAcc[1]],[linAcc[2]]])
+            linAcc = np.matmul(R, linAcc)
 
             # Store inflight acceleration data
             self.data_storage[0].append(TOF)
@@ -191,6 +198,23 @@ def data_gen():
         y2 = np.cos(2*np.pi*t) * np.exp(-t/10.)
         # adapted the data generator to yield both sin and cos
         yield t, y1, y2
+
+def euler_to_rotMat(yaw, pitch, roll):
+    Rz_yaw = np.array([
+        [np.cos(yaw), -np.sin(yaw), 0],
+        [np.sin(yaw),  np.cos(yaw), 0],
+        [          0,            0, 1]])
+    Ry_pitch = np.array([
+        [ np.cos(pitch), 0, np.sin(pitch)],
+        [             0, 1,             0],
+        [-np.sin(pitch), 0, np.cos(pitch)]])
+    Rx_roll = np.array([
+        [1,            0,             0],
+        [0, np.cos(roll), -np.sin(roll)],
+        [0, np.sin(roll),  np.cos(roll)]])
+    # R = RzRyRx
+    rotMat = np.dot(Rz_yaw, np.dot(Ry_pitch, Rx_roll))
+    return rotMat
 
 # Global variables
 data_gen.t = 0
