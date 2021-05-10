@@ -60,7 +60,7 @@ class Robot():
         start = time.time()
         prev_print = start
 
-        controller.update_channel(8,800)
+        self.controller.update_channel(8,800)
 
         while self.state.toDescent():
             # Collect data from sensors
@@ -128,7 +128,7 @@ class Robot():
         y2 = 0
         # Control the servo to unleash the parachute
 
-        controller.update_channel(8,200)
+        self.controller.update_channel(8,200)
 
         while self.state.toAbort():
             # Collect data from sensors(?)
