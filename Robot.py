@@ -75,7 +75,7 @@ class Robot():
                 R = euler_to_rotMat(ori[0], ori[1], ori[2])
                 linAcc = np.array([[linAcc[0]],[linAcc[1]],[linAcc[2]]])
                 linAcc = np.dot(R, linAcc)
-                linAcc = (linAcc[0], linAcc[1], linAcc[2])
+                linAcc = (linAcc[0][0], linAcc[1][0], linAcc[2][0])
 
                 # Store inflight acceleration data
                 self.data_storage[0].append(TOF)
