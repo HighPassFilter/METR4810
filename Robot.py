@@ -69,17 +69,18 @@ class Robot():
             temp = self.tele.getTemperature()
             pres = self.tele.getPressure()
             TOF = time.time() - start
+            
+            if linAcc[0] != None:
+                # Express the acceleration data in terms of world coordinate frame
+                R = euler_to_rotMat(ori[0], ori[1], ori[2])
+                linAcc = np.array([[linAcc[0]],[linAcc[1]],[linAcc[2]]])
+                linAcc = np.dot(R, linAcc)
 
-            # Express the acceleration data in terms of world coordinate frame
-            R = euler_to_rotMat(ori[0], ori[1], ori[2])
-            linAcc = np.array([[linAcc[0]],[linAcc[1]],[linAcc[2]]])
-            linAcc = np.dot(R, linAcc)
-
-            # Store inflight acceleration data
-            self.data_storage[0].append(TOF)
-            self.data_storage[1].append(linAcc[0])
-            self.data_storage[2].append(linAcc[1])
-            self.data_storage[3].append(linAcc[2])
+                # Store inflight acceleration data
+                self.data_storage[0].append(TOF)
+                self.data_storage[1].append(linAcc[0])
+                self.data_storage[2].append(linAcc[1])
+                self.data_storage[3].append(linAcc[2])
             
             # Send the data to the ground station (Every 0.2 seconds?)
             if time.time() - prev_print > 0.1:
