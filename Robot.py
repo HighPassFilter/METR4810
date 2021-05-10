@@ -11,8 +11,9 @@ from PiSBUS.SBUS import Controller
 
 
 class Robot():
-    def __init__(self):
+    def __init__(self, experiment=False):
         # Flag setup
+        self.experiment = experiment
         self.state = States()
         # Setup server
         self.server = Server()
@@ -70,7 +71,13 @@ class Robot():
         while self.state.toDescent():
             # Collect data from sensors
             linAcc = self.tele.getLinearAcceleration()
-            ori = self.tele.getOrientation()
+            
+            ori = (0,0,0)
+            if self.experiment:
+                ori = self.tele.getGravity()
+            else:
+                ori = self.tele.getOrientation()
+
             temp = self.tele.getTemperature()
             pres = self.tele.getPressure()
             TOF = time.time() - start
@@ -210,22 +217,7 @@ def data_gen():
         # adapted the data generator to yield both sin and cos
         yield t, y1, y2
 
-def euler_to_rotMat(yaw, pitch, roll):
-    Rz_yaw = np.array([
-        [np.cos(yaw), -np.sin(yaw), 0],
-        [np.sin(yaw),  np.cos(yaw), 0],
-        [          0,            0, 1]])
-    Ry_pitch = np.array([
-        [ np.cos(pitch), 0, np.sin(pitch)],
-        [             0, 1,             0],
-        [-np.sin(pitch), 0, np.cos(pitch)]])
-    Rx_roll = np.array([
-        [1,            0,             0],
-        [0, np.cos(roll), -np.sin(roll)],
-        [0, np.sin(roll),  np.cos(roll)]])
-    # R = RzRyRx
-    rotMat = np.dot(Rz_yaw, np.dot(Ry_pitch, Rx_roll))
-    return rotMat
+
 
 # Global variables
 data_gen.t = 0
