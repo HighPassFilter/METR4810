@@ -28,7 +28,12 @@ class Robot():
         self.tele = Telemetry()
         self.data_storage = [[],[],[],[]]
     
-    def stateReady(self): # NOT IN USE AT THE MOMENT
+    def stateReady(self):
+        # Obtain flat orientation
+        self.oriWorld = self.tele.getOrientation()
+        while self.oriWorld[0] == None:
+            self.oriWorld = self.tele.getOrientation()
+
         print("Robot ready for descent")
         while self.state.notDescent():
             # Listen to commands
@@ -72,7 +77,7 @@ class Robot():
             
             if linAcc[0] != None and ori[0] != None:
                 # Express the acceleration data in terms of world coordinate frame
-                R = euler_to_rotMat(ori[0], ori[1], ori[2])
+                R = euler_to_rotMat(ori[0]-self.oriWorld[0], ori[1]-self.oriWorld[0], ori[2]-self.oriWorld[0])
                 linAcc = np.array([[linAcc[0]],[linAcc[1]],[linAcc[2]]])
                 linAcc = np.dot(R, linAcc)
                 linAcc = (linAcc[0][0], linAcc[1][0], linAcc[2][0])
