@@ -71,7 +71,7 @@ class Robot():
         while self.state.toDescent():
             # Collect data from sensors
             linAcc = self.tele.getLinearAcceleration()
-            
+
             ori = (0,0,0)
             if self.experiment:
                 ori = self.tele.getGravity()
@@ -83,12 +83,6 @@ class Robot():
             TOF = time.time() - start
             
             if linAcc[0] != None and ori[0] != None:
-                # Express the acceleration data in terms of world coordinate frame
-                R = euler_to_rotMat(ori[0]-self.oriWorld[0], ori[1]-self.oriWorld[0], ori[2]-self.oriWorld[0])
-                linAcc = np.array([[linAcc[0]],[linAcc[1]],[linAcc[2]]])
-                linAcc = np.dot(R, linAcc)
-                linAcc = (linAcc[0][0], linAcc[1][0], linAcc[2][0])
-
                 # Store inflight acceleration data
                 self.data_storage[0].append(TOF)
                 self.data_storage[1].append(linAcc[0])
