@@ -73,7 +73,7 @@ class Robot():
             # Express the acceleration data in terms of world coordinate frame
             R = euler_to_rotMat(ori[0], ori[1], ori[2])
             linAcc = np.array([[linAcc[0]],[linAcc[1]],[linAcc[2]]])
-            linAcc = np.matmul(R, linAcc)
+            linAcc = np.dot(R, linAcc)
 
             # Store inflight acceleration data
             self.data_storage[0].append(TOF)
