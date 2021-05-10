@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from Telemetry import Telemetry
 from StateMachine import States
-#from PiSBUS.SBUS import Controller
+from PiSBUS.SBUS import Controller
 
 
 
@@ -22,7 +22,7 @@ class Robot():
         # Setup pilot
         
         # Setup Flight controller
-        # self.controller = Controller()
+        self.controller = Controller()
 
         # Setup sensors
         self.tele = Telemetry()
@@ -59,6 +59,8 @@ class Robot():
         # Generate dummy data
         start = time.time()
         prev_print = start
+
+        controller.update_channel(8,800)
 
         while self.state.toDescent():
             # Collect data from sensors
@@ -125,6 +127,8 @@ class Robot():
         y1 = 0
         y2 = 0
         # Control the servo to unleash the parachute
+
+        controller.update_channel(8,200)
 
         while self.state.toAbort():
             # Collect data from sensors(?)
