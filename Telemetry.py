@@ -43,11 +43,18 @@ class Telemetry():
         else:
             return [0, 0, 0]
 
+    def getGravity(self):
+        if self.bno055_isPresent:
+            return self.bno055.gravity
+        else:
+            return [0, 0, 0]
+
     def getTemperature(self):
         if self.bmp280_isPresent:
             return self.bmp280.temperature
         else:
             return 18
+    
 
     def getPressure(self):
         if self.bmp280_isPresent:
