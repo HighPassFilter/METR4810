@@ -37,7 +37,7 @@ class Robot():
         self.controller.update_channel(2, 10)
         
         # Set the servo to lockin position
-        self.controller.update_channel(7, 10)
+        self.controller.update_channel(7, 1500)
 
         while self.oriWorld[0] == None:
             self.oriWorld = self.tele.getOrientation()
@@ -70,9 +70,9 @@ class Robot():
         # Arm the robot
         self.controller.update_channel(4, 1300)
         time.sleep(0.1)
-        
+
         # Set servo position to release
-        self.controller.update_channel(7, 1500)
+        self.controller.update_channel(7, 10)
 
         # Generate dummy data
         start = time.time()
