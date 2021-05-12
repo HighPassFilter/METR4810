@@ -133,6 +133,7 @@ class Controller(Thread):
         #-----------------------------------------------------------------------
         # Continuously send SBUS message to the flight controller
         #-----------------------------------------------------------------------
+        start = time.time()
         while not self.isShutDown:
             # Check for queue messages
             if not self.queue.empty():
@@ -152,6 +153,7 @@ class Controller(Thread):
                     # Send the SBUS message
                     #self.send_sbus_msg()
                     print("SBUS message sent")
+                    start = time.time()
 controller = Controller()
 controller.update_channel(10,2000)
 controller.shutdown()
