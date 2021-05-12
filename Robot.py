@@ -192,6 +192,7 @@ class Robot():
     def shutDown(self):
         # TODO: Shut everything down
         print("Robot shutting down")
+        self.controller.shutdown()
         self.server.closeConnection()
     
     def reset(self):
