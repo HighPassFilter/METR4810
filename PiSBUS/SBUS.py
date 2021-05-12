@@ -90,6 +90,7 @@ class Controller(Thread):
     #---------------------------------------------------------------------------
     def __init__(self):
         self.queue = Queue()
+        self.duration = 0.007
         self.isShutDown = False
         Thread.__init__(self)
         self.start()
@@ -133,7 +134,7 @@ class Controller(Thread):
         #-----------------------------------------------------------------------
         # Continuously send SBUS message to the flight controller
         #-----------------------------------------------------------------------
-        start = time.time()
+        start = time.time() # Seconds
         while not self.isShutDown:
             # Check for queue messages
             if not self.queue.empty():
@@ -149,7 +150,7 @@ class Controller(Thread):
                 self.encoder.set_channel(channel,value)
             
             # Check if time has passed
-                if start - time.time() > self.duration:
+                if time.time() - start > self.duration:
                     # Send the SBUS message
                     #self.send_sbus_msg()
                     print("SBUS message sent")
