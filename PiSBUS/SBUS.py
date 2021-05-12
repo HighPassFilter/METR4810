@@ -148,10 +148,9 @@ class Controller(Thread):
                     # Send the SBUS message
                     #self.send_sbus_msg()
                     print("SBUS message sent")
-# controller = Controller()
-
-# controller.update_channel(10,2000)
-
+controller = Controller()
+controller.update_channel(10,2000)
+controller.shutdown()
 # while True:
 #     for channel in range(0,16):
 #         for i in range(600,1500):
