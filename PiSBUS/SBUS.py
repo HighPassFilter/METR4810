@@ -22,6 +22,8 @@ import readline
 import serial
 import ctypes
 import time
+from threading import Thread
+from queue import Queue
 
 
 #-------------------------------------------------------------------------------
@@ -83,23 +85,15 @@ class SBUSEncoder:
         return data
 
 #-------------------------------------------------------------------------------
-class Controller:
+class Controller(Thread):
 
     #---------------------------------------------------------------------------
     def __init__(self):
-        #-----------------------------------------------------------------------
-        # Configuration
-        #-----------------------------------------------------------------------
-        tty_file = '/dev/ttyAMA0'
-        #tty_file = '/dev/ttyS0'
-
-        #-----------------------------------------------------------------------
-        # Set up the SBUS encoder and open the serial port
-        #-----------------------------------------------------------------------
-        self.encoder = SBUSEncoder()
-        self.port = serial.Serial(tty_file, baudrate=int(100000),
-                                  parity=serial.PARITY_EVEN,
-                                  stopbits=serial.STOPBITS_TWO)
+        self.queue = Queue()
+        self.isShutDown = False
+        Thread.__init__(self)
+        self.start()
+        
     #---------------------------------------------------------------------------
     def send_sbus_msg(self):
         #-----------------------------------------------------------------------
@@ -116,27 +110,63 @@ class Controller:
         # scale = value + 100.
         # scale /= 200
         # self.encoder.set_channel(channel, int(scale * 2047))
-        self.encoder.set_channel(channel,value)
+        self.queue.put("channel;"+str(channel) + ";" + str(i))
 
-controller = Controller()
+    def shutdown(self):
+        self.queue.put("shutdown;0;0")
 
-controller.update_channel(10,2000)
+    def run(self):
+        #-----------------------------------------------------------------------
+        # Configuration
+        #-----------------------------------------------------------------------
+        tty_file = '/dev/ttyAMA0'
+        #tty_file = '/dev/ttyS0'
 
-while True:
-    for channel in range(0,16):
-        for i in range(600,1500):
-            controller.update_channel(channel,i)
-            controller.send_sbus_msg()
-            time.sleep(0.001)
+        #-----------------------------------------------------------------------
+        # Set up the SBUS encoder and open the serial port
+        #-----------------------------------------------------------------------
+        self.encoder = SBUSEncoder()
+        self.port = serial.Serial(tty_file, baudrate=int(100000),
+                                  parity=serial.PARITY_EVEN,
+                                  stopbits=serial.STOPBITS_TWO)
+
+        #-----------------------------------------------------------------------
+        # Continuously send SBUS message to the flight controller
+        #-----------------------------------------------------------------------
+        while self.isShutDown:
+            # Check for queue messages
+            if not self.queue.empty():
+                # Get data from the queue
+                data = self.queue.get_nowait()
+                data = data.split()
+                print(data)
+                # Update the channels
+                self.encoder.set_channel(channel,value)
+            
+            # Check if time has passed
+                if start - time.time() > self.duration:
+                    # Send the SBUS message
+                    #self.send_sbus_msg()
+                    print("SBUS message sent")
+# controller = Controller()
+
+# controller.update_channel(10,2000)
+
+# while True:
+#     for channel in range(0,16):
+#         for i in range(600,1500):
+#             controller.update_channel(channel,i)
+#             controller.send_sbus_msg()
+#             time.sleep(0.001)
 
 
-for byte in range(len(data)-1):
-    print(data[byte])
-    controller.port.write(bytes([data[byte]]))
-    while(controller.port.out_waiting != 0):
-        pass
+# for byte in range(len(data)-1):
+#     print(data[byte])
+#     controller.port.write(bytes([data[byte]]))
+#     while(controller.port.out_waiting != 0):
+#         pass
 
-while 1:
-    controller.port.write(b'\xFF')
-    #controller.send_sbus_msg()
-    time.sleep(0.07)
+# while 1:
+#     controller.port.write(b'\xFF')
+#     #controller.send_sbus_msg()
+#     time.sleep(0.07)
