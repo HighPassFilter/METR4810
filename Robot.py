@@ -32,6 +32,7 @@ class Robot():
     def stateReady(self):
         # Obtain flat orientation
         self.oriWorld = self.tele.getOrientation()
+        self.controller.update_channel(2, 10)
         while self.oriWorld[0] == None:
             self.oriWorld = self.tele.getOrientation()
 
