@@ -150,11 +150,11 @@ class Controller(Thread):
                 self.encoder.set_channel(channel,value)
             
             # Check if time has passed
-                if time.time() - start > self.duration:
-                    # Send the SBUS message
-                    #self.send_sbus_msg()
-                    print("SBUS message sent")
-                    start = time.time()
+            if time.time() - start > self.duration:
+                # Send the SBUS message
+                #self.send_sbus_msg()
+                print("SBUS message sent")
+                start = time.time()
 controller = Controller()
 controller.update_channel(10,2000)
 controller.shutdown()
