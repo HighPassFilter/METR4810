@@ -67,8 +67,10 @@ class Robot():
         
     def stateDescent(self):
         print("Robot in descent mode")
-        # Turn on the thrusters?
-
+        # Arm the robot
+        self.controller.update_channel(4, 1300)
+        time.sleep(0.1)
+        
         # Set servo position to release
         self.controller.update_channel(7, 1500)
 
@@ -76,7 +78,7 @@ class Robot():
         start = time.time()
         prev_print = start
 
-        self.controller.update_channel(4, 1300)
+        
 
         while self.state.toDescent():
             # Collect data from sensors
