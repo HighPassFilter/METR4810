@@ -142,8 +142,8 @@ class Controller(Thread):
                 if data[0] == "shutdown":
                     self.isShutDown = True
                 else:
-                    channel = data[1]
-                    value = data[2]
+                    channel = int(data[1])
+                    value = int(data[2])
                 # Update the channels
                 self.encoder.set_channel(channel,value)
             
