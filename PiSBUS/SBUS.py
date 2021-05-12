@@ -155,15 +155,17 @@ class Controller(Thread):
                 # Send the SBUS message
                 self.send_sbus_msg()
                 start = time.time()
-controller = Controller()
-controller.update_channel(10,2000)
-controller.shutdown()
-# while True:
-#     for channel in range(0,16):
-#         for i in range(600,1500):
-#             controller.update_channel(channel,i)
-#             controller.send_sbus_msg()
-#             time.sleep(0.001)
+
+# controller = Controller()
+
+# for channel in range(10,11):
+#     for i in [100, 500,  800, 1100, 1400, 1700]:
+#         print(i)
+#         controller.update_channel(channel,i)
+#         time.sleep(1)
+
+# controller.shutdown()
+
 
 
 # for byte in range(len(data)-1):

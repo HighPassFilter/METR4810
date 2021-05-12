@@ -74,6 +74,7 @@ class Robot():
 
             ori = (0,0,0)
             if self.experiment:
+                
                 ori = self.tele.getGravity()
             else:
                 ori = self.tele.getOrientation()
