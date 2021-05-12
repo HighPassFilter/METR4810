@@ -137,7 +137,7 @@ class Robot():
         y2 = 0
         # Control the servo to unleash the parachute
 
-        self.controller.update_channel(8,200)
+        self.controller.update_channel(4, 200)
 
         while self.state.toAbort():
             # Collect data from sensors(?)
