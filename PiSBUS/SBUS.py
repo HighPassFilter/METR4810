@@ -144,6 +144,7 @@ class Controller(Thread):
                 if data[0] == "shutdown":
                     self.isShutDown = True
                 else:
+                    print("Channel updated")
                     channel = int(data[1])
                     value = int(data[2])
                 # Update the channels
@@ -157,6 +158,7 @@ class Controller(Thread):
                 start = time.time()
 controller = Controller()
 controller.update_channel(10,2000)
+time.sleep(2)
 controller.shutdown()
 # while True:
 #     for channel in range(0,16):
