@@ -66,7 +66,7 @@ class Robot():
         start = time.time()
         prev_print = start
 
-        self.controller.update_channel(8,800)
+        self.controller.update_channel(4, 1300)
 
         while self.state.toDescent():
             # Collect data from sensors
