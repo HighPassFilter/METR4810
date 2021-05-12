@@ -32,7 +32,13 @@ class Robot():
     def stateReady(self):
         # Obtain flat orientation
         self.oriWorld = self.tele.getOrientation()
+        
+        # Set the throttle to zero
         self.controller.update_channel(2, 10)
+        
+        # Set the servo to lockin position
+        self.controller.update_channel(7, 10)
+
         while self.oriWorld[0] == None:
             self.oriWorld = self.tele.getOrientation()
 
@@ -62,6 +68,9 @@ class Robot():
     def stateDescent(self):
         print("Robot in descent mode")
         # Turn on the thrusters?
+
+        # Set servo position to release
+        self.controller.update_channel(7, 1500)
 
         # Generate dummy data
         start = time.time()
