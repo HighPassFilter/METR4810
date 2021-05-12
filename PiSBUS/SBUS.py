@@ -138,8 +138,12 @@ class Controller(Thread):
             if not self.queue.empty():
                 # Get data from the queue
                 data = self.queue.get_nowait()
-                data = data.split()
-                print(data)
+                data = data.split(";")
+                if data[0] == "shutdown":
+                    self.isShutDown = True
+                else:
+                    channel = data[1]
+                    value = data[2]
                 # Update the channels
                 self.encoder.set_channel(channel,value)
             
