@@ -110,7 +110,7 @@ class Controller(Thread):
         # scale = value + 100.
         # scale /= 200
         # self.encoder.set_channel(channel, int(scale * 2047))
-        self.queue.put("channel;"+str(channel) + ";" + str(i))
+        self.queue.put("channel;"+str(channel) + ";" + str(value))
 
     def shutdown(self):
         self.queue.put("shutdown;0;0")
