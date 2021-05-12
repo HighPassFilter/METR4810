@@ -153,12 +153,10 @@ class Controller(Thread):
             # Check if time has passed
             if time.time() - start > self.duration:
                 # Send the SBUS message
-                #self.send_sbus_msg()
-                print("SBUS message sent")
+                self.send_sbus_msg()
                 start = time.time()
 controller = Controller()
 controller.update_channel(10,2000)
-time.sleep(2)
 controller.shutdown()
 # while True:
 #     for channel in range(0,16):
