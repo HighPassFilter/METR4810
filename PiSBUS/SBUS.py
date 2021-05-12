@@ -133,7 +133,7 @@ class Controller(Thread):
         #-----------------------------------------------------------------------
         # Continuously send SBUS message to the flight controller
         #-----------------------------------------------------------------------
-        while self.isShutDown:
+        while not self.isShutDown:
             # Check for queue messages
             if not self.queue.empty():
                 # Get data from the queue
