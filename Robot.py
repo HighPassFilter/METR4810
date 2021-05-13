@@ -240,6 +240,7 @@ class Robot():
         self.server.closeConnection()
     
     def reset(self):
+        # Reset pin 15
         print("Robot resetting")
         # Shutdown the wifi connection
         self.server.closeConnection()

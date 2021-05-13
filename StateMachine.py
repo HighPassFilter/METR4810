@@ -13,7 +13,7 @@ class States():
         self.restart_setup = 0
 
         # Available options for each state
-        self.setupOptions = [4, 5, "s", "r"]
+        self.setupOptions = [1, 4, 5, "r"]
         self.readyOptions = [2, 3, 4, 5]
         self.descentOptions = [3, 4, 5]
         self.abortOptions = [4, 5]
