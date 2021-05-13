@@ -20,8 +20,8 @@ def get_center_target():
     image = rawCapture.array
     rawCapture.truncate(0)
 
-    lower = np.array([0,100,50], dtype = "uint8")
-    upper = np.array([30,255,255], dtype = "uint8")
+    lower = np.array([0,150,100], dtype = "uint8")
+    upper = np.array([15,255,255], dtype = "uint8")
 
     hsv_img = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
@@ -48,11 +48,11 @@ def get_center_target():
         try:
             cX = int(M["m10"] / M["m00"])
             cY = int(M["m01"] / M["m00"])
-            cv2.circle(image, (cX, cY), 7, (0, 0, 255), -1)
-            return (cx, cy)
+            #cv2.circle(image, (cX, cY), 7, (0, 0, 255), -1)
+            return (cX - image.shape[0]/2, cY - image.shape[1]/2)
         except:
             pass
     return (-1,-1)
 
-while (True):
-    print(get_center_target)
+if __name__ == "__main__":
+    print(get_center_target())
