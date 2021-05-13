@@ -58,6 +58,10 @@ class GroundStation():
                 print("Resetting the system")
                 self.client.sendData("reset")
                 self.state.reset = 1
+            elif option == 6:
+                print("Arming the system")
+                self.client.sendData("ready")
+                self.state.ready = 1
         else:
             print("Invalid command!")
 

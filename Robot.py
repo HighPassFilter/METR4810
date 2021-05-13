@@ -67,12 +67,15 @@ class Robot():
         elif self.state.reset == 1:
             self.reset()
             
-        elif self.state.lockIn == 1:
+        elif self.state.ready == 1:
             self.stateReady()
     
     def stateReady(self):
         # Set the servo to lockin position
-        self.controller.update_channel(7, 1500)
+        #self.controller.update_channel(7, 1500)
+
+        # Arm motors
+        self.controller.update_channel(4, 1300)
 
         while self.oriWorld[0] == None:
             self.oriWorld = self.tele.getOrientation()
@@ -98,12 +101,17 @@ class Robot():
             
         elif self.state.descent == 1:
             self.stateDescent()
-        
+
     def stateDescent(self):
         print("Robot in descent mode")
         # Arm the robot
-        self.controller.update_channel(4, 1300)
-        time.sleep(0.5)
+        # self.controller.update_channel(4, 1300)
+        # time.sleep(0.1)
+
+        # Power up the motors
+        for i in range(10, 1301, 10):
+            self.controller.update_channel(2, i)
+            time.sleep(0.01)
 
         # Set servo position to release
         self.controller.update_channel(7, 10)
@@ -214,15 +222,18 @@ class Robot():
             if message == "abort":
                 print("Robot received abort command!")
                 self.state.abort = 1
-            if message == "release":
+            elif message == "release":
                 print("Robot received release command!")
                 self.state.descent = 1
-            if message == "shutdown":
+            elif message == "shutdown":
                 print("Robot received shutdown command!")
                 self.state.shutDown = 1
-            if message == "reset":
+            elif message == "reset":
                 print("Robot received reset command!")
                 self.state.reset = 1
+            elif message == "ready":
+                print("Robot received ready command!")
+                self.state.ready = 1
 
             #return message
         except:

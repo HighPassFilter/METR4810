@@ -4,6 +4,7 @@ class States():
     def __init__(self):
         # State flags
         self.connected = 0
+        self.ready = 0
         self.lockIn = 0
         self.descent = 0
         self.abort = 0
@@ -24,7 +25,7 @@ class States():
 
     def notReady(self):
         # Option 1 and 3
-        return self.lockIn == 0 and self.shutDown == 0 and self.reset == 0
+        return self.ready == 0 and self.shutDown == 0 and self.reset == 0
 
     def notDescent(self):
         # Option 2, 3 and 4

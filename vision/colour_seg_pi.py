@@ -56,3 +56,4 @@ def get_center_target():
 
 if __name__ == "__main__":
     print(get_center_target())
+    print(get_center_target())
