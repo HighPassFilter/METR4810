@@ -195,7 +195,7 @@ def telemetryProcess(groundStation):
         groundStation.state.connected = 1
 
         # Begin the state machine
-        groundStation.stateReady()
+        groundStation.stateSetup()
 
     except Exception as e:
         print(e)
