@@ -49,13 +49,15 @@ class Robot():
 
             # Slowly set the servo to close position
             if self.state.lockIn == 1:
+                print("Closing the servo..")
                 for i in range(10, 1500):
                     # Update the channel
                     self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, i)
                     # Check if user wants to restart this process
                     self.receiveData()
                     if self.state.restart_setup == 1:
-                        break           
+                        print("Restart the setup phase")
+                        break
 
         # Go to the next state   
         if self.state.restart_setup == 1:
@@ -69,7 +71,7 @@ class Robot():
         elif self.state.reset == 1:
             self.reset()
             
-        elif self.state.ready == 1:
+        elif self.state.lockIn == 1:
             self.stateReady()
     
     def stateReady(self):
