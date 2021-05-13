@@ -3,6 +3,10 @@ from picamera import PiCamera
 import cv2
 import numpy as np
 
+camera = PiCamera()
+rawCapture = PiRGBArray(camera)
+time.sleep(0.1)
+
 def viewImage(image):
     cv2.namedWindow('Display', cv2.WINDOW_NORMAL)
     cv2.imshow('Display', image)
@@ -10,12 +14,11 @@ def viewImage(image):
     cv2.destroyAllWindows()
 
 def get_center_target():
-    camera = PiCamera()
-    rawCapture = PiRGBArray(camera)
-    time.sleep(0.1)
+
 
     camera.capture(rawCapture, format="bgr")
     image = rawCapture.array
+    rawCapture.truncate(0)
 
     lower = np.array([0,100,50], dtype = "uint8")
     upper = np.array([30,255,255], dtype = "uint8")
@@ -41,7 +44,6 @@ def get_center_target():
             largestArea = area
             largestCont = cont
     if len(contours) > 0:
-        cv2.drawContours(image, [largestCont], 0, (255, 0, 0), 3)
         M = cv2.moments(largestCont)
         try:
             cX = int(M["m10"] / M["m00"])
@@ -50,9 +52,6 @@ def get_center_target():
             return (cx, cy)
         except:
             pass
-        cv2.imshow('frame', image)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            return
     return (-1,-1)
 
 while (True):
