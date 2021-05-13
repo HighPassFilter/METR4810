@@ -73,7 +73,7 @@ class GroundStation():
     def stateSetup(self):
         print("Lock in: 1, Shutdown: 4, Reset: 5, Restart setup: r,:")
 
-        while self.state.notReady():
+        while self.state.notSetup():
             # Handle option and commands from user
             self.optionHandler(self.state.setupOptions)       
 
