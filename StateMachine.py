@@ -11,6 +11,7 @@ class States():
         self.touchdown = 0
         self.shutDown = 0
         self.reset = 0
+        self.setup = 0
         self.restart_setup = 0
 
         # Available options for each state
