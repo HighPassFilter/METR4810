@@ -11,8 +11,9 @@ from PiSBUS.SBUS import Controller
 
 
 class Robot():
-    def __init__(self):
+    def __init__(self, experiment=False):
         # Flag setup
+        self.experiment = experiment
         self.state = States()
         # Setup server
         self.server = Server()
@@ -28,7 +29,19 @@ class Robot():
         self.tele = Telemetry()
         self.data_storage = [[],[],[],[]]
     
-    def stateReady(self): # NOT IN USE AT THE MOMENT
+    def stateReady(self):
+        # Obtain flat orientation
+        self.oriWorld = self.tele.getOrientation()
+        
+        # Set the throttle to zero
+        self.controller.update_channel(2, 10)
+        
+        # Set the servo to lockin position
+        self.controller.update_channel(7, 1500)
+
+        while self.oriWorld[0] == None:
+            self.oriWorld = self.tele.getOrientation()
+
         print("Robot ready for descent")
         while self.state.notDescent():
             # Listen to commands
@@ -36,6 +49,8 @@ class Robot():
             
         # Execute commands
         # Control the servo to release the craft
+
+        # Obtain the global frame of reference
 
         # Go to the next state
         if self.state.shutDown == 1:
@@ -52,27 +67,40 @@ class Robot():
         
     def stateDescent(self):
         print("Robot in descent mode")
-        # Turn on the thrusters?
+        # Arm the robot
+        self.controller.update_channel(4, 1300)
+        time.sleep(0.1)
+
+        # Set servo position to release
+        self.controller.update_channel(7, 10)
 
         # Generate dummy data
         start = time.time()
         prev_print = start
 
-        controller.update_channel(8,800)
+        
 
         while self.state.toDescent():
             # Collect data from sensors
             linAcc = self.tele.getLinearAcceleration()
-            ori = self.tele.getOrientation()
+
+            ori = (0,0,0)
+            if self.experiment:
+                
+                ori = self.tele.getGravity()
+            else:
+                ori = self.tele.getOrientation()
+
             temp = self.tele.getTemperature()
             pres = self.tele.getPressure()
             TOF = time.time() - start
-
-            # Store inflight acceleration data
-            self.data_storage[0].append(TOF)
-            self.data_storage[1].append(linAcc[0])
-            self.data_storage[2].append(linAcc[1])
-            self.data_storage[3].append(linAcc[2])
+            
+            if linAcc[0] != None and ori[0] != None:
+                # Store inflight acceleration data
+                self.data_storage[0].append(TOF)
+                self.data_storage[1].append(linAcc[0])
+                self.data_storage[2].append(linAcc[1])
+                self.data_storage[3].append(linAcc[2])
             
             # Send the data to the ground station (Every 0.2 seconds?)
             if time.time() - prev_print > 0.1:
@@ -121,7 +149,7 @@ class Robot():
         y2 = 0
         # Control the servo to unleash the parachute
 
-        controller.update_channel(8,200)
+        self.controller.update_channel(4, 200)
 
         while self.state.toAbort():
             # Collect data from sensors(?)
@@ -176,6 +204,7 @@ class Robot():
     def shutDown(self):
         # TODO: Shut everything down
         print("Robot shutting down")
+        self.controller.shutdown()
         self.server.closeConnection()
     
     def reset(self):
@@ -195,6 +224,8 @@ def data_gen():
         y2 = np.cos(2*np.pi*t) * np.exp(-t/10.)
         # adapted the data generator to yield both sin and cos
         yield t, y1, y2
+
+
 
 # Global variables
 data_gen.t = 0

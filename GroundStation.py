@@ -16,7 +16,7 @@ class GroundStation():
         self.client = ""
         self.tele_pipe = pipe
         self.guiListener = ""
-        self.sensorData = [[], [], [], [], []]
+        self.sensorData = [[], [], [], [], [], []]
 
         # Setup new process
         self.process = Process(target=telemetryProcess, args=(self,))
@@ -103,12 +103,14 @@ class GroundStation():
             
             if data != "":
                 # Timestamp the data
-                self.sensorData[0].append(datetime.datetime.now())
+                self.sensorData[0].append(data[0])
                 # Store the non empty data
-                self.sensorData[1].append(data[0])
-                self.sensorData[2].append(data[1])
-                self.sensorData[3].append(data[2])
-                self.sensorData[4].append(data[3])
+                self.sensorData[1].append(data[1])
+                self.sensorData[2].append(data[2])
+                self.sensorData[3].append(data[3])
+                self.sensorData[4].append(data[4])
+                self.sensorData[5].append(data[5])
+                self.sensorData[6].append(data[6])
 
             # Send the data to the GUI
             self.tele_pipe.send(data)
@@ -117,7 +119,7 @@ class GroundStation():
         #print(self.sensorData)
         df = pd.DataFrame(self.sensorData)
         df = df.T
-        df.columns = ["TS", "Temperature", "Orientation", "Acceleration", "Pressure"]
+        df.columns = ["TS", "Lin_Acc_X", "Lin_Acc_Y", "Lin_Acc_Z", "Yaw", "Pitch", "Roll"]
         date = datetime.datetime.now()
         filename = "sensor_" + str(date.month) + "_" + str(date.day) + "_" + str(date.hour) + "_" +str(date.minute) + "_" + str(date.second) + ".csv"
         df.to_csv(filename, index=False)
