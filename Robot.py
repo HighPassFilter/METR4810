@@ -71,11 +71,8 @@ class Robot():
             self.stateReady()
     
     def stateReady(self):
-        # Set the servo to lockin position
-        #self.controller.update_channel(7, 1500)
-
         # Arm motors
-        self.controller.update_channel(4, 1300)
+        self.controller.update_channel(self.ARM_CHANNEL, 1300)
 
         while self.oriWorld[0] == None:
             self.oriWorld = self.tele.getOrientation()
@@ -86,8 +83,6 @@ class Robot():
             self.receiveData()
             
         # Execute commands
-
-        # Obtain the global frame of reference
 
         # Go to the next state
         if self.state.shutDown == 1:
