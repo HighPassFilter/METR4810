@@ -40,6 +40,8 @@ class Robot():
 
         # Set the servo to open position
         self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, 10)
+
+        print("Robot ready to be locked in")
         
         while self.state.notSetup():
             # Wait for the command to set the servo to lock in position
