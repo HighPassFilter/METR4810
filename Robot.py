@@ -37,7 +37,10 @@ class Robot():
         self.controller.update_channel(2, 10)
         
         # Set the servo to lockin position
-        self.controller.update_channel(7, 1500)
+        #self.controller.update_channel(7, 1500)
+
+        # Arm motors
+        self.controller.update_channel(4, 1300)
 
         while self.oriWorld[0] == None:
             self.oriWorld = self.tele.getOrientation()
@@ -48,7 +51,6 @@ class Robot():
             self.receiveData()
             
         # Execute commands
-        # Control the servo to release the craft
 
         # Obtain the global frame of reference
 
@@ -64,12 +66,17 @@ class Robot():
             
         elif self.state.descent == 1:
             self.stateDescent()
-        
+
     def stateDescent(self):
         print("Robot in descent mode")
         # Arm the robot
-        self.controller.update_channel(4, 1300)
-        time.sleep(0.1)
+        # self.controller.update_channel(4, 1300)
+        # time.sleep(0.1)
+
+        # Power up the motors
+        for i in range(10, 1301, 10):
+            self.controller.update_channel(2, i)
+            time.sleep(0.01)
 
         # Set servo position to release
         self.controller.update_channel(7, 10)
