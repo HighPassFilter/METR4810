@@ -24,18 +24,56 @@ class Robot():
         
         # Setup Flight controller
         self.controller = Controller()
+        self.RELEASE_SERVO_CHANNEL = 7
+        self.ARM_CHANNEL = 4
+        self.THROTTLE_CHANNEL = 2
+        self.PITCH_CHANNEL = 1 # To be changed
+        self.ROLL_CHANNEL = 0 # To be changed
 
         # Setup sensors
         self.tele = Telemetry()
         self.data_storage = [[],[],[],[]]
     
-    def stateReady(self):
-        # Obtain flat orientation
-        self.oriWorld = self.tele.getOrientation()
-        
+    def stateSetup(self):
         # Set the throttle to zero
-        self.controller.update_channel(2, 10)
+        self.controller.update_channel(self.THROTTLE_CHANNEL, 10)
+
+        # Set the servo to open position
+        self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, 10)
         
+        while self.state.notSetup():
+            # Wait for the command to set the servo to lock in position
+            self.receiveData()
+
+            # Slowly set the servo to close position
+            if self.state.setup == 1:
+                while i in range(10, 1500):
+                    # Update the channel
+                    self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, i)
+                    # Check if user wants to restart this process
+                    self.receiveData()
+                    if self.state.restart_setup == 1:
+                        break           
+
+        # Go to the next state   
+        if self.state.restart_setup == 1:
+            self.state.setup = 0
+            self.state.restart_setup = 0
+            self.stateSetup()
+
+        elif self.state.shutDown == 1:
+            self.shutDown()           
+
+        elif self.state.reset == 1:
+            self.reset()
+
+        elif self.state.abort == 1:
+            self.stateAbort()
+            
+        elif self.state.lockIn == 1:
+            self.stateReady()
+    
+    def stateReady(self):
         # Set the servo to lockin position
         self.controller.update_channel(7, 1500)
 
@@ -48,7 +86,6 @@ class Robot():
             self.receiveData()
             
         # Execute commands
-        # Control the servo to release the craft
 
         # Obtain the global frame of reference
 
@@ -69,7 +106,7 @@ class Robot():
         print("Robot in descent mode")
         # Arm the robot
         self.controller.update_channel(4, 1300)
-        time.sleep(0.1)
+        time.sleep(0.5)
 
         # Set servo position to release
         self.controller.update_channel(7, 10)
@@ -77,8 +114,6 @@ class Robot():
         # Generate dummy data
         start = time.time()
         prev_print = start
-
-        
 
         while self.state.toDescent():
             # Collect data from sensors
@@ -212,22 +247,5 @@ class Robot():
         # Shutdown the wifi connection
         self.server.closeConnection()
         # Send the command to the pilot to reset
-
-
-def data_gen():
-    t = data_gen.t
-    cnt = 0
-    while cnt < 1000:
-        cnt+=1
-        t += 0.05
-        y1 = np.sin(2*np.pi*t) * np.exp(-t/10.)
-        y2 = np.cos(2*np.pi*t) * np.exp(-t/10.)
-        # adapted the data generator to yield both sin and cos
-        yield t, y1, y2
-
-
-
-# Global variables
-data_gen.t = 0
 
 

@@ -101,7 +101,6 @@ class Controller(Thread):
         # Get the data to send
         #-----------------------------------------------------------------------
         data = self.encoder.get_data()
-        print(len(data), data)
         # Send it line by line so that serial doesn't overlap
         #-----------------------------------------------------------------------
         self.port.write(data)
@@ -144,7 +143,6 @@ class Controller(Thread):
                 if data[0] == "shutdown":
                     self.isShutDown = True
                 else:
-                    print("Channel updated")
                     channel = int(data[1])
                     value = int(data[2])
                 # Update the channels
