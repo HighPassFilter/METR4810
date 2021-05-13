@@ -11,4 +11,4 @@ gs_parser.add_argument('-e',
 
 args = gs_parser.parse_args()
 robot = Robot(args.experiment)
-robot.stateReady()
+robot.stateSetup()

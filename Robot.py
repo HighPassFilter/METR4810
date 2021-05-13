@@ -40,24 +40,28 @@ class Robot():
 
         # Set the servo to open position
         self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, 10)
+
+        print("Robot ready to be locked in")
         
         while self.state.notSetup():
             # Wait for the command to set the servo to lock in position
             self.receiveData()
 
             # Slowly set the servo to close position
-            if self.state.setup == 1:
-                while i in range(10, 1500):
+            if self.state.lockIn == 1:
+                print("Closing the servo..")
+                for i in range(10, 1500):
                     # Update the channel
                     self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, i)
                     # Check if user wants to restart this process
                     self.receiveData()
                     if self.state.restart_setup == 1:
-                        break           
+                        print("Restart the setup phase")
+                        break
 
         # Go to the next state   
         if self.state.restart_setup == 1:
-            self.state.setup = 0
+            self.state.lockIn = 0
             self.state.restart_setup = 0
             self.stateSetup()
 
@@ -67,18 +71,12 @@ class Robot():
         elif self.state.reset == 1:
             self.reset()
             
-        elif self.state.ready == 1:
+        elif self.state.lockIn == 1:
             self.stateReady()
     
     def stateReady(self):
-        # Set the servo to lockin position
-        #self.controller.update_channel(7, 1500)
-
         # Arm motors
-        self.controller.update_channel(4, 1300)
-
-        while self.oriWorld[0] == None:
-            self.oriWorld = self.tele.getOrientation()
+        self.controller.update_channel(self.ARM_CHANNEL, 1300)
 
         print("Robot ready for descent")
         while self.state.notDescent():
@@ -86,8 +84,6 @@ class Robot():
             self.receiveData()
             
         # Execute commands
-
-        # Obtain the global frame of reference
 
         # Go to the next state
         if self.state.shutDown == 1:
@@ -114,7 +110,7 @@ class Robot():
             time.sleep(0.01)
 
         # Set servo position to release
-        self.controller.update_channel(7, 10)
+        self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, 10)
 
         # Generate dummy data
         start = time.time()
@@ -189,7 +185,7 @@ class Robot():
         y2 = 0
         # Control the servo to unleash the parachute
 
-        self.controller.update_channel(4, 200)
+        self.controller.update_channel(self.ARM_CHANNEL, 200)
 
         while self.state.toAbort():
             # Collect data from sensors(?)
@@ -234,6 +230,9 @@ class Robot():
             elif message == "ready":
                 print("Robot received ready command!")
                 self.state.ready = 1
+            elif message == "lockin":
+                print("Servo locked in!")
+                self.state.lockIn = 1
 
             #return message
         except:
@@ -251,6 +250,7 @@ class Robot():
         self.server.closeConnection()
     
     def reset(self):
+        # Reset pin 15
         print("Robot resetting")
         # Shutdown the wifi connection
         self.server.closeConnection()
