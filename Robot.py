@@ -47,7 +47,7 @@ class Robot():
 
             # Slowly set the servo to close position
             if self.state.lockIn == 1:
-                while i in range(10, 1500):
+                for i in range(10, 1500):
                     # Update the channel
                     self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, i)
                     # Check if user wants to restart this process
