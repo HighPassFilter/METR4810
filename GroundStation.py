@@ -10,13 +10,14 @@ import pandas as pd
 import datetime
 
 class GroundStation():
-    def __init__(self, pipe):
+    def __init__(self, pipe, experiment=False):
         # Initialise class methods
+        self.experiment = experiment
         self.state = States()
         self.client = ""
         self.tele_pipe = pipe
         self.guiListener = ""
-        self.sensorData = [[], [], [], [], [], []]
+        self.sensorData = [[], [], [], [], [], [], []]
 
         # Setup new process
         self.process = Process(target=telemetryProcess, args=(self,))
@@ -64,8 +65,8 @@ class GroundStation():
         data = self.client.receiveData()
         return self.client.unpackData(data)
 
-    def stateHardSetup(self):
-        print("Lock in: 1, Shutdown: 4, Reset: 5, :")
+    def stateSetup(self):
+        print("Lock in: 1, Shutdown: 4, Reset: 5, Restart setup: r,:")
 
         while self.state.notReady():
             # Handle option and commands from user
@@ -75,7 +76,7 @@ class GroundStation():
         self.stateReady()
 
     def stateReady(self):
-        print("Descent: 2, Abort: 3, Shutdown: 4, Reset: 5, :")
+        print("Arm: 2, Abort: 3, Shutdown: 4, Reset: 5, :, Restart setup: r,:")
         while self.state.notDescent():
             self.optionHandler(self.state.readyOptions)
 
