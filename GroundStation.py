@@ -33,6 +33,7 @@ class GroundStation():
             if option == 1:
                 # Lock in
                 self.state.lockIn = 1
+                self.client.sendData("lockin")
                 print("Servo lock in")
 
             elif option == 2:
@@ -80,7 +81,7 @@ class GroundStation():
         self.stateReady()
 
     def stateReady(self):
-        print("Arm: 2, Abort: 3, Shutdown: 4, Reset: 5, :, Restart setup: r,:")
+        print("Abort: 3, Shutdown: 4, Reset: 5, Arm: 6, Restart setup: r,:")
         while self.state.notDescent():
             self.optionHandler(self.state.readyOptions)
 

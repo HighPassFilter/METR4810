@@ -46,7 +46,7 @@ class Robot():
             self.receiveData()
 
             # Slowly set the servo to close position
-            if self.state.setup == 1:
+            if self.state.lockIn == 1:
                 while i in range(10, 1500):
                     # Update the channel
                     self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, i)
@@ -57,7 +57,7 @@ class Robot():
 
         # Go to the next state   
         if self.state.restart_setup == 1:
-            self.state.setup = 0
+            self.state.lockIn = 0
             self.state.restart_setup = 0
             self.stateSetup()
 
@@ -226,6 +226,9 @@ class Robot():
             elif message == "ready":
                 print("Robot received ready command!")
                 self.state.ready = 1
+            elif message == "lockin":
+                print("Servo locked in!")
+                self.state.lockIn = 1
 
             #return message
         except:
