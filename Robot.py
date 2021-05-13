@@ -66,9 +66,6 @@ class Robot():
 
         elif self.state.reset == 1:
             self.reset()
-
-        elif self.state.abort == 1:
-            self.stateAbort()
             
         elif self.state.ready == 1:
             self.stateReady()

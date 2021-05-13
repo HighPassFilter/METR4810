@@ -11,12 +11,17 @@ class States():
         self.touchdown = 0
         self.shutDown = 0
         self.reset = 0
+        self.restart_setup = 0
 
         # Available options for each state
-        self.setupOptions = [1, 4, 5]
+        self.setupOptions = [4, 5, "s", "r"]
         self.readyOptions = [2, 3, 4, 5]
         self.descentOptions = [3, 4, 5]
         self.abortOptions = [4, 5]
+    
+    def notSetup(self):
+        # Option S, R, 3, 4
+        return self.lockIn == 0 and self.shutDown == 0 and self.reset == 0 and self.restart_setup == 0
 
     def notReady(self):
         # Option 1 and 3
