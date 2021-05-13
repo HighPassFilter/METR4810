@@ -57,6 +57,10 @@ class GroundStation():
                 print("Resetting the system")
                 self.client.sendData("reset")
                 self.state.reset = 1
+            elif option == 6:
+                print("Arming the system")
+                self.client.sendData("ready")
+                self.state.ready = 1
         else:
             print("Invalid command!")
 
@@ -65,7 +69,7 @@ class GroundStation():
         return self.client.unpackData(data)
 
     def stateHardSetup(self):
-        print("Lock in: 1, Shutdown: 4, Reset: 5, :")
+        print("Ready: 1, Shutdown: 4, Reset: 5, :")
 
         while self.state.notReady():
             # Handle option and commands from user
