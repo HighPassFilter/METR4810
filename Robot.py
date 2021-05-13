@@ -74,9 +74,6 @@ class Robot():
         # Arm motors
         self.controller.update_channel(self.ARM_CHANNEL, 1300)
 
-        while self.oriWorld[0] == None:
-            self.oriWorld = self.tele.getOrientation()
-
         print("Robot ready for descent")
         while self.state.notDescent():
             # Listen to commands
@@ -109,7 +106,7 @@ class Robot():
             time.sleep(0.01)
 
         # Set servo position to release
-        self.controller.update_channel(7, 10)
+        self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, 10)
 
         # Generate dummy data
         start = time.time()
@@ -184,7 +181,7 @@ class Robot():
         y2 = 0
         # Control the servo to unleash the parachute
 
-        self.controller.update_channel(4, 200)
+        self.controller.update_channel(self.ARM_CHANNEL, 200)
 
         while self.state.toAbort():
             # Collect data from sensors(?)
