@@ -9,17 +9,37 @@
 # from PiSBUS.SBUS import Controller
 
 class StateMachine():
-    CONNECTING = 1
-    RESET_SERVO = 2
-    ATTACH_SERVO = 3
-    ARM = 4
-    DISARM = 5
-    DESCEND = 6
-    ABORT = 0
+    CONNECT = 0
+    RESET_SERVO = 1
+    ATTACH_SERVO = 2
+    ARM = 3
+    DISARM = 4
+    DESCEND = 5
+    ABORT = 6
     SHUTDOWN = 7
+    RESET = 8
+    current_state = CONNECT
+
+    state_options = [[ATTACH_SERVO, SHUTDOWN, RESET],                                       # Connect
+                          [ATTACH_SERVO, SHUTDOWN, RESET],                                  # Open servo
+                          [RESET_SERVO, ARM, SHUTDOWN, RESET],                              # Close servo
+                          [DISARM, RESET_SERVO, DESCEND, SHUTDOWN, RESET],                  # Arm the motors
+                          [ARM, RESET_SERVO, SHUTDOWN, RESET],                              # Disarm the drone
+                          [ABORT, SHUTDOWN, RESET],                                         # Descend
+                          [SHUTDOWN, RESET]]                                                # Abort   
+
+    state_options_helper = [[],
+                            ["Open servo: 1"],
+                            ["Close servo: 2"],
+                            ["Arm the motors: 3"],
+                            ["Disarm the motors: 4"],
+                            ["Descend: 5"],
+                            ["Abort: 6"],
+                            ["Shutdown: 7"],
+                            ["Abort: 8"]]
 
     # def __init__(self):
-    #     self.state = 0
+    #     self.
     
     def connect(self):
         print("connecting")
@@ -46,6 +66,7 @@ class StateMachine():
     def descend(self):
         print("Beginning descent")
         # this section will slowly power motors up to required thrust, release the servo and drop
+        # while descend:
         # navigation control will also go in this section
         # data also needs to be sent to the computer
         # This state will also trigger the landing state once the craft is close enough to the ground
@@ -62,30 +83,49 @@ class StateMachine():
     def shutdown(self):
         print("Shutting down")
         # code to shut down the pi after disarming motors
+
+    def reset(self):
+        print("Power cycling")
+        # code to shut down the pi after disarming motors
     
-    def new_state(self):
+    def new_state(self, next_state):
+        change_state = False
+        # Check if command given is valid for certain state
+        if self.state_options[self.current_state].count(next_state) == 1:
+            self.current_state = next_state
+            change_state = True
+        else:
+            print("Invalid command! Please try again.")
+
+        # Provide user with available state options
+        self.option_string_builder()
+        return change_state
+
+    def change_state(self):
         # process = connecting -> connected -> reset_servo -> attach_servo -> arm_motors -> Descend -> Landing
-        while True:
-            state = input("Please input the state you would like to go in or type h for help: ")
-            if state == str(self.CONNECTING):
-                self.connect()
-            elif state == str(self.RESET_SERVO):
-                self.open_servo()
-            elif state == str(self.ATTACH_SERVO):
-                self.close_servo()
-            elif state == str(self.ARM):
-                self.arm_motors()
-            elif state == str(self.DISARM):
-                self.disarm_motors()
-            elif state == str(self.ABORT):
-                self.abort()
-            elif state == str(self.DESCEND):
-                self.descend()
-            elif state == str(self.SHUTDOWN):
-                self.shutdown()
-            elif state == "h":
-                print("Press 1 to connect to computer\nPress 2 to open the servo\nPress 3 to close the servo\nPress 4 to arm motors\nPress 5 to disarm motors\nPress 6 to descend\nPress 7 to abort\nPress 0 to shutdown")
+        if self.current_state == str(self.RESET_SERVO):
+            self.open_servo()
+        elif self.current_state == str(self.ATTACH_SERVO):
+            self.close_servo()
+        elif self.current_state == str(self.ARM):
+            self.arm_motors()
+        elif self.current_state == str(self.DISARM):
+            self.disarm_motors()
+        elif self.current_state == str(self.ABORT):
+            self.abort()
+        elif self.current_state == str(self.DESCEND):
+            self.descend()
+        elif self.current_state == str(self.SHUTDOWN):
+            self.shutdown()
+        
+    def option_string_builder(self):
+        msg = ""
+        for option in self.state_options[self.current_state]:
+             msg += self.state_options_helper[option] + ", "
+
+        msg += ":"
+        print(msg)
 
 if __name__ == "__main__":
     machine = StateMachine()
-    machine.new_state()
+    machine.connect()
