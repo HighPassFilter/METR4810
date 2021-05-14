@@ -105,9 +105,9 @@ class Robot():
         # time.sleep(0.1)
 
         # Power up the motors
-        for i in range(10, 1301, 10):
-            self.controller.update_channel(2, i)
-            time.sleep(0.01)
+        # for i in range(10, 1301, 10):
+        #     self.controller.update_channel(2, i)
+        #     time.sleep(0.01)
 
         # Set servo position to release
         self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, 10)
