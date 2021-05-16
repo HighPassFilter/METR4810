@@ -96,7 +96,7 @@ class StateMachine():
 
         start = time.time()
         prev_print = start
-        while True:
+        if True:
             # Descending
             # Abort is possible 
             try:
