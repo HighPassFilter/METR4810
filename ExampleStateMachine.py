@@ -193,6 +193,10 @@ class StateMachine():
 
         msg += ":"
         print(msg)
+    
+    
+    keyboard.on_press_key("a", abort())
+
 
 if __name__ == "__main__":
     machine = StateMachine()
