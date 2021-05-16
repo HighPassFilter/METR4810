@@ -15,7 +15,7 @@ cap = cv2.VideoCapture(0)
 if True:
     ret, frame = cap.read()
     #image = frame
-    image = cv2.imread("vision/target.jpg")
+    image = cv2.imread("vision/unknown.png")
     viewImage(image)
     # create NumPy arrays from the boundaries
     # blue is 110 to 130
