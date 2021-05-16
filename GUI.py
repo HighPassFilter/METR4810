@@ -113,7 +113,7 @@ class UserInput(Thread):
         Thread.__init__(self)
 
     def run(self):
-        host = "192.168.0.9" #input("Please enter the robot's host ip address: ")
+        host = "192.168.43.43" #input("Please enter the robot's host ip address: ")
         
         # Return host
         self.main_pipe.send(host)

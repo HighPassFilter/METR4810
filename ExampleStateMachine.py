@@ -167,7 +167,7 @@ class StateMachine():
 
     def change_state(self):
         while True:
-            self.current_state = input("Please provide command input or h for help")
+            self.current_state = input("Please provide command input or h for help: ")
             # process = connecting -> connected -> reset_servo -> attach_servo -> arm_motors -> Descend -> Landing
             if self.current_state == str(self.RESET_SERVO):
                 self.open_servo()
@@ -189,7 +189,7 @@ class StateMachine():
     def option_string_builder(self):
         msg = ""
         for option in self.state_options_helper:
-             msg += option + "\n"
+             msg += option[0] + "\n"
 
         msg += ":"
         print(msg)
