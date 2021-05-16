@@ -89,7 +89,7 @@ class StateMachine():
     def descend(self):
         print("Beginning descent")
         # Power up the motors
-        for i in range(10, 1301, 10):
+        for i in range(10, 1301):
             self.controller.update_channel(2, i)
         # Release
         self.open_servo()
