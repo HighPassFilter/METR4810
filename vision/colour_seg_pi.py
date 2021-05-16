@@ -34,7 +34,7 @@ def get_center_target():
 
     ret, threshold = cv2.threshold(gray, 90, 255, 0)
 
-    contours, hierarchy =  cv2.findContours(threshold,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy =  cv2.findContours(curr_mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
     largestCont = None
     largestArea = -1
