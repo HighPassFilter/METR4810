@@ -196,15 +196,15 @@ class StateMachine():
     
     
 
-def static_abort():
-    controller = Controller()
-    print("ABORT!")
-    # Set the throttle to zero
-    controller.update_channel(2, 10)
-    # Disarm motors
-    controller.update_channel(4, 10)
+# def static_abort():
+#     controller = Controller()
+#     print("ABORT!")
+#     # Set the throttle to zero
+#     controller.update_channel(2, 10)
+#     # Disarm motors
+#     controller.update_channel(4, 10)
 
 if __name__ == "__main__":
-    keyboard.on_press_key("a", static_abort())
+    # keyboard.on_press_key("a", static_abort())
     machine = StateMachine()
     machine.change_state()
