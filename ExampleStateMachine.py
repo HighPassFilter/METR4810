@@ -195,7 +195,7 @@ class StateMachine():
         print(msg)
     
     
-    keyboard.on_press_key("a", abort())
+    keyboard.on_press_key("a", self.abort())
 
 
 if __name__ == "__main__":
