@@ -183,30 +183,32 @@ class StateMachine():
         return change_state
 
     def change_state(self, new_state):
+
         self.current_state = new_state
+        
         # process = connecting -> connected -> reset_servo -> attach_servo -> arm_motors -> Descend -> Landing
 
         #If the state has changed, do something about it
         if(self.current_state != self.previous_state):
-            if self.current_state == str(self.RESET_SERVO):
-                self.open_servo()
-            elif self.current_state == str(self.ATTACH_SERVO):
-                self.close_servo()
-            elif self.current_state == str(self.ARM):
-                self.arm_motors()
-            elif self.current_state == str(self.DISARM):
-                self.disarm_motors()
-            elif self.current_state == str(self.ABORT):
-                self.abort()
-            elif self.current_state == str(self.DESCEND):
-                self.descend()
-            elif self.current_state == str(self.SHUTDOWN):
-                self.shutdown()
-            elif self.current_state == "h":
-                self.option_string_builder()
-        
             #Update the previous state
             self.previous_state = self.current_state
+
+        if self.current_state == str(self.RESET_SERVO):
+            self.open_servo()
+        elif self.current_state == str(self.ATTACH_SERVO):
+            self.close_servo()
+        elif self.current_state == str(self.ARM):
+            self.arm_motors()
+        elif self.current_state == str(self.DISARM):
+            self.disarm_motors()
+        elif self.current_state == str(self.ABORT):
+            self.abort()
+        elif self.current_state == str(self.DESCEND):
+            self.descend()
+        elif self.current_state == str(self.SHUTDOWN):
+            self.shutdown()
+        elif self.current_state == "h":
+            self.option_string_builder()
         
     def option_string_builder(self):
         msg = ""
