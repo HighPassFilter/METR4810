@@ -62,11 +62,13 @@ class StateMachine():
     #     print("connected")
     
     def open_servo(self):
-        print("Setting servo to open position")
-        # Set the servo to open position
-        self.servo_pos = 10
-        self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, self.servo_pos)
-        print("Setting Servo pos: ", self.servo_pos)
+        #One Time Function 
+        if(self.current_state != self.previous_state):
+            print("Setting servo to open position")
+            # Set the servo to open position
+            self.servo_pos = 10
+            self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, self.servo_pos)
+            print("Setting Servo pos: ", self.servo_pos)
     
     def close_servo(self):
         #INTERRUPTABLE FUNCTION
@@ -82,20 +84,26 @@ class StateMachine():
 
     
     def arm_motors(self):
-        print("Arming...")
-        # Set the throttle to zero
-        self.controller.update_channel(self.THROTTLE_CHANNEL, 10)
-        # Arm motors
-        self.controller.update_channel(self.ARM_CHANNEL, 1300)
+        #One Time Function 
+        if(self.current_state != self.previous_state):
+            print("Arming...")
+            # Set the throttle to zero
+            self.controller.update_channel(self.THROTTLE_CHANNEL, 10)
+            # Arm motors
+            self.controller.update_channel(self.ARM_CHANNEL, 1300)
     
     def disarm_motors(self):
-        print("Disarming...")
-        # Set the throttle to zero
-        self.controller.update_channel(self.THROTTLE_CHANNEL, 10)
-        # Disarm motors
-        self.controller.update_channel(self.ARM_CHANNEL, 10)
+        #One Time Function 
+        if(self.current_state != self.previous_state):
+            print("Disarming...")
+            # Set the throttle to zero
+            self.controller.update_channel(self.THROTTLE_CHANNEL, 10)
+            # Disarm motors
+            self.controller.update_channel(self.ARM_CHANNEL, 10)
     
     def descend(self):
+        #INTERRUPTABLE STATE
+
         print("Beginning descent")
         # Power up the motors
         for i in range(10, 1200):
@@ -196,7 +204,7 @@ class StateMachine():
                 self.shutdown()
             elif self.current_state == "h":
                 self.option_string_builder()
-
+        
             #Update the previous state
             self.previous_state = self.current_state
         
