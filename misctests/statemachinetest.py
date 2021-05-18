@@ -1,7 +1,7 @@
 #Testing for adding frequent looping to state machine for interrupt capability
 
 from time import sleep
-import keyboard
+import sys, select
   
 class StateMachine():
     CONNECT = 7
@@ -87,18 +87,12 @@ if __name__ == "__main__":
     machine = StateMachine()
     machine.change_state(0)
 
-    #Setup Keybaord interrupt for user input
-    keyboard.add_hotkey('1', machine.change_state, args=[1])
-    keyboard.add_hotkey('2', machine.change_state, args=[2])
-    keyboard.add_hotkey('3', machine.change_state, args=[3])
-    keyboard.add_hotkey('4', machine.change_state, args=[4])
-    keyboard.add_hotkey('5', machine.change_state, args=[5])
-    keyboard.add_hotkey('6', machine.change_state, args=[6])
-    keyboard.add_hotkey('7', machine.change_state, args=[7])
-    keyboard.add_hotkey('h', machine.change_state, args=['h'])
-
     while True:
-        machine.change_state(machine.current_state)
-        sleep(0.02)
+        i, o, e = select.select( [sys.stdin], [], [], 0.02 )
+
+        if (i):
+            machine.change_state(sys.stdin.readline().strip())
+        else:
+            machine.change_state(machine.current_state)
 
 
