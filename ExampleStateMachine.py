@@ -64,8 +64,9 @@ class StateMachine():
     def open_servo(self):
         print("Setting servo to open position")
         # Set the servo to open position
-        self.servo_pos = 10
+        self.servo_pos = self.servo_pos + 50
         self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, self.servo_pos)
+        print("Setting Servo pos: ", self.servo_pos)
     
     def close_servo(self):
         #INTERRUPTABLE FUNCTION
