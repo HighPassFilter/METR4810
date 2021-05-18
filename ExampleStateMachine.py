@@ -3,6 +3,7 @@ import time
 import numpy as np
 from Telemetry import Telemetry
 from PiSBUS.SBUS import Controller
+import sys, select
 import keyboard
 
 class StateMachine():
@@ -14,6 +15,10 @@ class StateMachine():
     DESCEND = 5
     ABORT = 0
     SHUTDOWN = 6
+
+    current_state = 0
+    previous_state = 0
+
 
     state_options = [[ATTACH_SERVO, SHUTDOWN],                                       # Connect
                           [ATTACH_SERVO, SHUTDOWN],                                  # Open servo
@@ -165,10 +170,12 @@ class StateMachine():
         self.option_string_builder()
         return change_state
 
-    def change_state(self):
-        while True:
-            self.current_state = input("Please provide command input or h for help: ")
-            # process = connecting -> connected -> reset_servo -> attach_servo -> arm_motors -> Descend -> Landing
+    def change_state(self, new_state):
+        self.current_state = new_state
+        # process = connecting -> connected -> reset_servo -> attach_servo -> arm_motors -> Descend -> Landing
+
+        #If the state has changed, do something about it
+        if(self.current_state != self.previous_state):
             if self.current_state == str(self.RESET_SERVO):
                 self.open_servo()
             elif self.current_state == str(self.ATTACH_SERVO):
@@ -185,6 +192,9 @@ class StateMachine():
                 self.shutdown()
             elif self.current_state == "h":
                 self.option_string_builder()
+
+            #Update the previous state
+            self.previous_state = self.current_state
         
     def option_string_builder(self):
         msg = ""
@@ -193,18 +203,20 @@ class StateMachine():
 
         msg += ":"
         print(msg)
-    
-    
-
-# def static_abort():
-#     controller = Controller()
-#     print("ABORT!")
-#     # Set the throttle to zero
-#     controller.update_channel(2, 10)
-#     # Disarm motors
-#     controller.update_channel(4, 10)
 
 if __name__ == "__main__":
-    # keyboard.on_press_key("a", static_abort())
+
     machine = StateMachine()
-    machine.change_state()
+    machine.change_state(0)
+
+    #Always look for user inputs, with timeout of 0.02s (50Hz)
+    # This enables aborting during long duration operations
+    # However, all functions must be created with the intent on being called repeatedly
+    # if they are to run for an extended duration
+    while True:
+        i, o, e = select.select( [sys.stdin], [], [], 0.02 )
+
+        if (i):
+            machine.change_state(sys.stdin.readline().strip())
+        else:
+            machine.change_state(machine.current_state)
