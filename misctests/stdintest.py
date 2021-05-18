@@ -8,5 +8,5 @@ while True:
 
     if (i):
         print("You said", sys.stdin.readline().strip())
-    else:
-        print("You said nothing!")
+    # else:
+    #     print("You said nothing!")
