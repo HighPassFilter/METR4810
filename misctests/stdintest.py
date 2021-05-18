@@ -1,10 +1,12 @@
 import sys, select
 
-print("You have ten seconds to answer!")
+print("Please provide command input or h for help:  ")
 
-i, o, e = select.select( [sys.stdin], [], [], 10 )
 
-if (i):
-  print("You said", sys.stdin.readline().strip())
-else:
-  print("You said nothing!")
+while True:
+    i, o, e = select.select( [sys.stdin], [], [], 0.02 )
+
+    if (i):
+        print("You said", sys.stdin.readline().strip())
+    else:
+        print("You said nothing!")
