@@ -19,6 +19,8 @@ class StateMachine():
     current_state = 0
     previous_state = 0
 
+    #Variables for interuptable functions
+    servo_pos = 10
 
     state_options = [[ATTACH_SERVO, SHUTDOWN],                                       # Connect
                           [ATTACH_SERVO, SHUTDOWN],                                  # Open servo
@@ -62,20 +64,20 @@ class StateMachine():
     def open_servo(self):
         print("Setting servo to open position")
         # Set the servo to open position
-        self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, 10)
+        self.servo_pos = 10
+        self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, self.servo_pos)
     
     def close_servo(self):
-        print("Setting servo to close position")
+        #INTERRUPTABLE FUNCTION
+
+        if(self.current_state != self.previous_state):
+            print("Setting servo to close position")
+        
         # Code to move servo slowly to closed position
-        for i in range(10, 1500):
-            # Update the channel
-            self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, i)
-            # TODO add in cancelling
-            try:
-                if keyboard.is_pressed('q'):
-                    break
-            except:
-                pass
+        if(self.servo_pos < 1500):
+            self.servo_pos += 10
+            self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, self.servo_pos)
+
     
     def arm_motors(self):
         print("Arming...")
