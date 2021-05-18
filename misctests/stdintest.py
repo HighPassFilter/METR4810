@@ -1,8 +1,10 @@
-import sys
-import keyboard
+import sys, select
 
-keyboard.add_hotkey('\r', print, args=('triggered', 'hotkey'))
+print("You have ten seconds to answer!")
 
-if __name__ == "__main__":
-    while True:
-        a = 1
+i, o, e = select.select( [sys.stdin], [], [], 10 )
+
+if (i):
+  print("You said", sys.stdin.readline().strip())
+else:
+  print("You said nothing!")
