@@ -188,11 +188,6 @@ class StateMachine():
         
         # process = connecting -> connected -> reset_servo -> attach_servo -> arm_motors -> Descend -> Landing
 
-        #If the state has changed, do something about it
-        if(self.current_state != self.previous_state):
-            #Update the previous state
-            self.previous_state = self.current_state
-
         if self.current_state == str(self.RESET_SERVO):
             self.open_servo()
         elif self.current_state == str(self.ATTACH_SERVO):
@@ -209,6 +204,11 @@ class StateMachine():
             self.shutdown()
         elif self.current_state == "h":
             self.option_string_builder()
+        
+        #If the state has changed, do something about it
+        if(self.current_state != self.previous_state):
+            #Update the previous state
+            self.previous_state = self.current_state
         
     def option_string_builder(self):
         msg = ""
