@@ -1,14 +1,8 @@
 import sys
+import keyboard
 
-print(1)
-stream = sys.stdin
-print(2)
-print(len(stream))
+keyboard.add_hotkey('\r', print, args=('triggered', 'hotkey'))
 
-# for line in sys.stdin:
-#     print(3)
-#     if 'q' == line.rstrip():
-#         break
-#     print(f'Input : {line}')
-  
-print("Exit")
+if __name__ == "__main__":
+    while True:
+        a = 1

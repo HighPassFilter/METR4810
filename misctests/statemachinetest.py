@@ -1,8 +1,7 @@
 #Testing for adding frequent looping to state machine for interrupt capability
 
 from time import sleep
-import time
-import sys, select
+import keyboard
   
 class StateMachine():
     CONNECT = 7
@@ -13,6 +12,9 @@ class StateMachine():
     DESCEND = 5
     ABORT = 0
     SHUTDOWN = 6
+    
+    current_state = 0
+    previous_state = 0
 
     state_options = [[ATTACH_SERVO, SHUTDOWN],                                     # Connect
                         [ATTACH_SERVO, SHUTDOWN],                                  # Open servo
@@ -34,26 +36,22 @@ class StateMachine():
     def close_servo(self):
         print("Setting servo to close position")
         # Code to move servo slowly to closed position
-        for i in range(10, 1500):
-            # Update the channel
-            print(i)
-            sleep(0.01)
 
-    def change_state(self):
-        while True:
-            #Get input if any
-            Timeout = 0.1
-            end_time = time.time() + Timeout
-            while time.time() < end_time:
-                res = input('What is your input: ')
-                try:
-                    self.current_state = res
-                except SomeException:
-                    print('There was an error, try again.')
-                else:
-                    break
-            #self.current_state = input("Please provide command input or h for help: ")
-            # process = connecting -> connected -> reset_servo -> attach_servo -> arm_motors -> Descend -> Landing
+
+    def open_servo(self):
+        print("Setting servo to close position")
+        # Code to move servo slowly to closed position
+
+
+    def change_state(self, new_state):
+        #Get input if any
+        #self.current_state = input("Please provide command input or h for help: ")
+        self.current_state = str(new_state)
+        # process = connecting -> connected -> reset_servo -> attach_servo -> arm_motors -> Descend -> Landing
+
+        #If state has changed, print info about it
+        if(self.current_state != self.previous_state):
+
             if self.current_state == str(self.RESET_SERVO):
                 print(self.current_state + " Reset Servo")
             elif self.current_state == str(self.ATTACH_SERVO):
@@ -72,6 +70,9 @@ class StateMachine():
             elif self.current_state == "h":
                 self.option_string_builder()
 
+            self.previous_state = self.current_state
+            print("Please provide command input or h for help:  ")
+
     def option_string_builder(self):
         msg = ""
         for option in self.state_options_helper:
@@ -82,6 +83,22 @@ class StateMachine():
     
 
 if __name__ == "__main__":
+
     machine = StateMachine()
-    machine.change_state()
+    machine.change_state(0)
+
+    #Setup Keybaord interrupt for user input
+    keyboard.add_hotkey('1', machine.change_state, args=[1])
+    keyboard.add_hotkey('2', machine.change_state, args=[2])
+    keyboard.add_hotkey('3', machine.change_state, args=[3])
+    keyboard.add_hotkey('4', machine.change_state, args=[4])
+    keyboard.add_hotkey('5', machine.change_state, args=[5])
+    keyboard.add_hotkey('6', machine.change_state, args=[6])
+    keyboard.add_hotkey('7', machine.change_state, args=[7])
+    keyboard.add_hotkey('h', machine.change_state, args=['h'])
+
+    while True:
+        machine.change_state(machine.current_state)
+        sleep(0.02)
+
 
