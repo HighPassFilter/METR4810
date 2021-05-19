@@ -5,6 +5,7 @@ from Telemetry import Telemetry
 from PiSBUS.SBUS import Controller
 import sys, select
 import keyboard
+from vision.colour_seg_pi import Vision
 
 class StateMachine():
     CONNECT = 7
@@ -49,6 +50,7 @@ class StateMachine():
         self.controller = Controller()
         self.tele = Telemetry()
         self.data_storage = [[],[],[],[]]
+        self.vision = Vision()
     
     def sendData(self, dataType, data):
         data = self.server.packData(dataType, data)
@@ -103,44 +105,47 @@ class StateMachine():
     
     def descend(self):
         #INTERRUPTABLE STATE
+        if(self.current_state != self.previous_state):
+            print("Beginning descent")
 
-        print("Beginning descent")
-        # Power up the motors
-        for i in range(10, 1200):
-            self.controller.update_channel(2, i)
-        # Release
-        self.open_servo()
+        centre = self.vision.get_center_target()
+        print(centre)    
+        # # Power up the motors
+        # for i in range(10, 1200):
+        #     self.controller.update_channel(2, i)
 
-        start = time.time()
-        prev_print = start
-        if True:
-            # Descending
-            # Abort is possible 
-            try:
-                if keyboard.is_pressed('q'):
-                    self.abort()
-            except:
-                pass
-            # Collect data from sensors
-            linAcc = self.tele.getLinearAcceleration()
-            ori = self.tele.getOrientation()
+        # # Release
+        # self.open_servo()
+        # start = time.time()
+        # prev_print = start
+        # if True:
+        #     # Descending
+        #     # Abort is possible 
+        #     try:
+        #         if keyboard.is_pressed('q'):
+        #             self.abort()
+        #     except:
+        #         pass
+        #     # Collect data from sensors
+        #     linAcc = self.tele.getLinearAcceleration()
+        #     ori = self.tele.getOrientation()
 
-            temp = self.tele.getTemperature()
-            pres = self.tele.getPressure()
-            TOF = time.time() - start
+        #     temp = self.tele.getTemperature()
+        #     pres = self.tele.getPressure()
+        #     TOF = time.time() - start
             
-            if linAcc[0] != None and ori[0] != None:
-                # Store inflight acceleration data
-                self.data_storage[0].append(TOF)
-                self.data_storage[1].append(linAcc[0])
-                self.data_storage[2].append(linAcc[1])
-                self.data_storage[3].append(linAcc[2])
+        #     if linAcc[0] != None and ori[0] != None:
+        #         # Store inflight acceleration data
+        #         self.data_storage[0].append(TOF)
+        #         self.data_storage[1].append(linAcc[0])
+        #         self.data_storage[2].append(linAcc[1])
+        #         self.data_storage[3].append(linAcc[2])
             
-            # Send the data to the ground station (Every 0.2 seconds?)
-            if time.time() - prev_print > 0.1:
-                if linAcc[0] != None and ori[0] != None and temp != None and pres != None:
-                    self.sendData("Sensor", [TOF, np.round(linAcc[0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
-                    prev_print = time.time()
+        #     # Send the data to the ground station (Every 0.2 seconds?)
+        #     if time.time() - prev_print > 0.1:
+        #         if linAcc[0] != None and ori[0] != None and temp != None and pres != None:
+        #             self.sendData("Sensor", [TOF, np.round(linAcc[0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
+        #             prev_print = time.time()
 
         # this section will slowly power motors up to required thrust, release the servo and drop
         # while descend:
