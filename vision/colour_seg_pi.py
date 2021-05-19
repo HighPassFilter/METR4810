@@ -36,7 +36,6 @@ class Vision:
 
     def update(self):
         # keep looping infinitely until the thread is stopped
-        print(len(self.stream))
         for f in self.stream:
             # grab the frame from the stream and clear the stream in
             # preparation for the next frame
