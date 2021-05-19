@@ -61,7 +61,7 @@ class Vision:
 
     def get_center_target(self):
         # Get image from the camera
-        self.update
+        self.update()
         image = self.frame
 
         lower = np.array([0,150,100], dtype = "uint8")
