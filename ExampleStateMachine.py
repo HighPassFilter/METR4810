@@ -51,7 +51,7 @@ class StateMachine():
         self.tele = Telemetry()
         self.data_storage = [[],[],[],[]]
         self.vision = Vision()
-        self.vision.start()
+        #self.vision.start()
     
     def sendData(self, dataType, data):
         data = self.server.packData(dataType, data)
@@ -109,6 +109,7 @@ class StateMachine():
         if(self.current_state != self.previous_state):
             print("Beginning descent")
         
+        #Taking an image and finding target
         t = time.time()
         print("Starting Vision iteration")
         centre = self.vision.get_center_target()
