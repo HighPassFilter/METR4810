@@ -51,6 +51,7 @@ class StateMachine():
         self.tele = Telemetry()
         self.data_storage = [[],[],[],[]]
         self.vision = Vision()
+        self.vision.start()
     
     def sendData(self, dataType, data):
         data = self.server.packData(dataType, data)
@@ -159,10 +160,12 @@ class StateMachine():
         # Code to run when the craft is landing, is kind of tba
     
     def abort(self):
-        print("ABORT!")
-        # Code to disarm the motors and trigger abort mode
-        # Disarm motors
-        self.disarm_motors()
+        #One time function
+        if(self.current_state != self.previous_state):
+            print("ABORT!")
+            # Code to disarm the motors and trigger abort mode
+            # Disarm motors
+            self.disarm_motors()
     
     def shutdown(self):
         print("Shutting down")
@@ -216,12 +219,14 @@ class StateMachine():
             self.previous_state = self.current_state
         
     def option_string_builder(self):
-        msg = ""
-        for option in self.state_options_helper:
-             msg += option[0] + "\n"
+        #One time function
+        if(self.current_state != self.previous_state):
+            msg = ""
+            for option in self.state_options_helper:
+                msg += option[0] + "\n"
 
-        msg += ":"
-        print(msg)
+            msg += ":"
+            print(msg)
 
 if __name__ == "__main__":
 
