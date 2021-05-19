@@ -108,9 +108,12 @@ class StateMachine():
         #INTERRUPTABLE STATE
         if(self.current_state != self.previous_state):
             print("Beginning descent")
-
+        
+        t = time.time()
+        print("Starting Vision iteration")
         centre = self.vision.get_center_target()
-        print(centre)    
+        print(centre) 
+        print(time.time() -t)   
         # # Power up the motors
         # for i in range(10, 1200):
         #     self.controller.update_channel(2, i)
