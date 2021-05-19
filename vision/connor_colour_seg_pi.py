@@ -38,6 +38,7 @@ class Vision:
     def update(self):
         image = np.empty((1280, 720, 3), dtype=np.uint8)
         self.camera.capture(image, 'bgr')
+        self.frame = image
 
     def read(self):
         # return the frame most recently read
