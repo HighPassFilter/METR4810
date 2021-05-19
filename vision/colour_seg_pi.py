@@ -67,16 +67,16 @@ class Vision:
         upper = np.array([15,255,255], dtype = "uint8")
 
         # Perform HSV colour filtering
-        print("<------------------------------------------------------>")
-        print("Convert RGB to HSV")
-        self.measure.tic()
+        # print("<------------------------------------------------------>")
+        # print("Convert RGB to HSV")
+        # self.measure.tic()
         hsv_img = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        self.measure.toc()
+        # self.measure.toc()
 
-        print("HSV Colour thresholding")
-        self.measure.tic()
+        # print("HSV Colour thresholding")
+        # self.measure.tic()
         curr_mask = cv2.inRange(hsv_img, lower, upper)
-        self.measure.toc()
+        # self.measure.toc()
 
         # print("HSV equalization(?)")
         # self.measure.tic()
@@ -124,8 +124,8 @@ class Vision:
                 cX = int(M["m10"] / M["m00"])
                 cY = int(M["m01"] / M["m00"])
                 #cv2.circle(image, (cX, cY), 7, (0, 0, 255), -1)
-                return (cX - image.shape[0]/2, cY - image.shape[1]/2)
-                #return (cX, cY)
+                #return (cX - image.shape[0]/2, cY - image.shape[1]/2)
+                return (cX, cY)
             except:
                 pass
         return (-1,-1)     
