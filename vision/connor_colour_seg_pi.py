@@ -2,12 +2,13 @@ import time
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 import cv2
+import io
 import numpy as np
 from threading import Thread
 from queue import Queue
 
 class Vision:
-    def __init__(self, framerate=30):
+    def __init__(self, framerate=24):
         # initialize the camera
         self.camera = PiCamera()
 
@@ -16,9 +17,9 @@ class Vision:
         self.camera.framerate = framerate
 
         # initialize the stream
-        self.rawCapture = PiRGBArray(self.camera, self.camera.resolution)
-        self.stream = self.camera.capture_continuous(self.rawCapture, 
-            format="bgr", use_video_port=True)
+        # self.rawCapture = PiRGBArray(self.camera, self.camera.resolution)
+        # self.stream = self.camera.capture_continuous(self.rawCapture, 
+        #     format="bgr", use_video_port=True)
 
         # initialize the frame and the variable used to indicate
         # if the thread should be stopped
@@ -35,21 +36,8 @@ class Vision:
         return self
 
     def update(self):
-        # keep looping infinitely until the thread is stopped
-        for f in self.stream:
-            # grab the frame from the stream and clear the stream in
-            # preparation for the next frame
-            self.frame = f.array
-            self.rawCapture.truncate(0)
-            #print("hi")
-
-            # if the thread indicator variable is set, stop the thread
-            # and resource camera resources
-            if self.stopped:
-                self.stream.close()
-                self.rawCapture.close()
-                self.camera.close()
-                return
+        image = np.empty((1280, 720, 3), dtype=np.uint8)
+        self.camera.capture(image, 'bgr')
 
     def read(self):
         # return the frame most recently read
@@ -149,18 +137,10 @@ def viewImage(image):
 
 if __name__ == "__main__":
     vision = Vision()
-    vision.start()
     time.sleep(2)
-    start = time.time()
     while True:
-        image = vision.read()
-        start = time.time()
+        t = time.time()
         centre = vision.get_center_target()
         print(centre)
-        duration = time.time() - start
-        print('Total time:')
-        print(duration)
-        image = cv2.circle(image, (int(centre[0]), int(centre[1])), 7, (0, 0, 255), -1)
-        cv2.imwrite('./test_image.jpg', image)
-
+        print(time.time() - t)
     cv2.destroyAllWindows()
