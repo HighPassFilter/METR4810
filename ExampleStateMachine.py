@@ -117,8 +117,8 @@ class StateMachine():
         if abs(self.tele.getOrientation()[1] - self.initialOri[1]) <= 4 and abs(self.tele.getOrientation()[2] - self.initialOri[2]) <= 4:
             # If craft is level TODO calibrate levelness values
             centre = self.vision.get_center_target()
-            self.controller.update_channel(self.PITCH_CHANNEL, 1520 + int(0.1*centre[1]))
-            self.controller.update_channel(self.PITCH_CHANNEL, 1520 + int(0.1*centre[0]))
+            self.controller.update_channel(self.PITCH_CHANNEL, 940 + int(0.1*centre[1]))
+            self.controller.update_channel(self.ROLL_CHANNEL, 940 + int(0.1*centre[0]))
 
         # print(centre) 
         # print(time.time() -t)   
