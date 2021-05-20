@@ -125,7 +125,6 @@ class StateMachine():
 
         #for i in range(1100):
         self.controller.update_channel(self.THROTTLE_CHANNEL, 1100)
-        self.server.sendData()
         if abs(self.tele.getOrientation()[1] - self.initialOri[1]) <= 4 and abs(self.tele.getOrientation()[2] - self.initialOri[2]) <= 4:
             # If craft is level TODO calibrate levelness values
             # 0.621x + 883
@@ -248,6 +247,11 @@ class StateMachine():
         if(self.current_state != self.previous_state):
             #Update the previous state
             self.previous_state = self.current_state
+    
+    def sendData(self, dataType, data):
+        data = self.server.packData(dataType, data)
+        #print(data)
+        self.server.sendData(data) 
         
     def option_string_builder(self):
         #One time function
