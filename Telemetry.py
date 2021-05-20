@@ -41,7 +41,7 @@ class Telemetry():
         for i in range(100):
             if self.bno055_isPresent:
                 output = self.bno055.euler
-                if output != None:
+                if output[0] != None:
                     return output
         print("Sensor read failed")
         return [0,0,0]
