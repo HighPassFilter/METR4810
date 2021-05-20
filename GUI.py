@@ -40,10 +40,6 @@ class UserInterface():
        
         self.main_pipe = pipe
 
-         # Setup terminal for receiving user inputs
-        self.terminal = UserInput(self.main_pipe)
-        self.terminal.start()
-
     def startGraph(self, groundStation):
         ani = animation.FuncAnimation(fig, run, fargs=(self.main_pipe,) ,interval=1, repeat=False, blit=True)
         plt.show()
@@ -103,30 +99,3 @@ def run(frame, pipe):
     line[7].set_data(xdata, pres_data)
 
     return line
-
-# This class controls the states of the user interface
-class UserInput(Thread):
-    # Requirements:
-    # 1. A way to communicate with the groundstation -> Setup the process of the groundStation (pipe)
-    def __init__(self, pipe):
-        self.main_pipe = pipe
-        Thread.__init__(self)
-
-    def run(self):
-        host = "192.168.43.43" #input("Please enter the robot's host ip address: ")
-        
-        # Return host
-        self.main_pipe.send(host)
-        #print(self.main_pipe.recv())
-        while True:
-            try:
-                option = input("Please enter your command: ")
-                # Check if option is an integer
-                # Return command
-                self.main_pipe.send(int(option))
-                if int(option) == 4:
-                    break
-            except ValueError:
-                print("Invalid command!")
-            except Exception:
-                print(e)
