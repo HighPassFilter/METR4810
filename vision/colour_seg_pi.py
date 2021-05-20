@@ -124,7 +124,6 @@ class Vision:
                 cX = int(M["m10"] / M["m00"])
                 cY = int(M["m01"] / M["m00"])
                 #cv2.circle(image, (cX, cY), 7, (0, 0, 255), -1)
-                print(image.shape)
                 return (cX - image.shape[1]/2, cY - image.shape[0]/2)
                 #return (cX, cY)
             except:

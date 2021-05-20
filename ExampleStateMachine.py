@@ -116,13 +116,14 @@ class StateMachine():
         # t = time.time()
         # print("Starting Vision iteration")
         #print(self.tele.getOrientation()[1] - self.initialOri[1], self.tele.getOrientation()[2] - self.initialOri[2])
+        self.controller.update_channel(self.THROTTLE_CHANNEL, 800)
         if abs(self.tele.getOrientation()[1] - self.initialOri[1]) <= 4 and abs(self.tele.getOrientation()[2] - self.initialOri[2]) <= 4:
             # If craft is level TODO calibrate levelness values
             # 0.621x + 883
             centre = self.vision.get_center_target()
             print(centre)
-            self.controller.update_channel(self.PITCH_CHANNEL, self.centre_pos - int(1*centre[1]))
-            self.controller.update_channel(self.ROLL_CHANNEL, self.centre_pos + int(1*centre[0]))
+            self.controller.update_channel(self.PITCH_CHANNEL, self.centre_pos - int(0.5*centre[1]))
+            self.controller.update_channel(self.ROLL_CHANNEL, self.centre_pos + int(0.5*centre[0]))
             time.sleep(0.2)
             self.controller.update_channel(self.PITCH_CHANNEL, self.centre_pos)
             self.controller.update_channel(self.ROLL_CHANNEL, self.centre_pos)
