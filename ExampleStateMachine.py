@@ -51,7 +51,7 @@ class StateMachine():
         self.tele = Telemetry()
         self.data_storage = [[],[],[],[]]
         self.vision = Vision()
-        # self.vision.start()
+        self.vision.start()
     
     def sendData(self, dataType, data):
         data = self.server.packData(dataType, data)
