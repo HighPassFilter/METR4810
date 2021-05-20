@@ -20,7 +20,7 @@ class StateMachine():
     current_state = 0
     previous_state = 0
 
-    centre_pos = 1100
+    centre_pos = 1025
 
     #Variables for interuptable functions
     servo_pos = 10
@@ -120,6 +120,7 @@ class StateMachine():
             # If craft is level TODO calibrate levelness values
             # 0.621x + 883
             centre = self.vision.get_center_target()
+            print(centre)
             self.controller.update_channel(self.PITCH_CHANNEL, self.centre_pos - int(1*centre[1]))
             self.controller.update_channel(self.ROLL_CHANNEL, self.centre_pos + int(1*centre[0]))
             time.sleep(0.2)
