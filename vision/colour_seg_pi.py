@@ -128,7 +128,7 @@ class Vision:
                 #return (cX, cY)
             except:
                 pass
-        return (-1,-1)     
+        return (0,0)     
 
 class MeasureTime():
     def tic(self):
