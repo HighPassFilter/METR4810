@@ -81,7 +81,7 @@ class GroundStation():
         self.stateReady()
 
     def stateReady(self):
-        print("Abort: 3, Shutdown: 4, Reset: 5, Arm: 6, Restart setup: r,:")
+        print("Descend: 2, Abort: 3, Shutdown: 4, Reset: 5, Restart setup: r,:")
         while self.state.notDescent():
             self.optionHandler(self.state.readyOptions)
 

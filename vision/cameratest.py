@@ -14,3 +14,9 @@ for frame in camera.capture_continuous(raw, format="bgr", use_video_port=True):
     raw.truncate(0)
     if key == ord("q"):
         break
+
+
+
+
+            
+            

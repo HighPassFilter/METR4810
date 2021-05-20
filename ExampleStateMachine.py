@@ -5,7 +5,7 @@ from Telemetry import Telemetry
 from PiSBUS.SBUS import Controller
 import sys, select
 import keyboard
-from vision.colour_seg_pi import Vision
+from vision.connor_colour_seg_pi import Vision
 
 class StateMachine():
     CONNECT = 7
@@ -51,7 +51,7 @@ class StateMachine():
         self.tele = Telemetry()
         self.data_storage = [[],[],[],[]]
         self.vision = Vision()
-        self.vision.start()
+        # self.vision.start()
     
     def sendData(self, dataType, data):
         data = self.server.packData(dataType, data)
@@ -111,7 +111,7 @@ class StateMachine():
         
         #Taking an image and finding target
         t = time.time()
-        print("Starting Vision iteration")
+        # print("Starting Vision iteration")
         centre = self.vision.get_center_target()
         print(centre) 
         print(time.time() -t)   

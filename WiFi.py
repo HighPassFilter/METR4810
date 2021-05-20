@@ -213,7 +213,7 @@ class Listener(Agent):
                         fragmented = 0
 
             except socket.timeout:
-                pass
+                print("hi")
             except Exception as e:
                 # Report any errors and exit
                 print(e)
