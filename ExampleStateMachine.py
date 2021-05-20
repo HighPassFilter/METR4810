@@ -5,7 +5,7 @@ from Telemetry import Telemetry
 from PiSBUS.SBUS import Controller
 import sys, select
 import keyboard
-from vision.connor_colour_seg_pi import Vision
+from vision.colour_seg_pi import Vision
 
 class StateMachine():
     CONNECT = 7
