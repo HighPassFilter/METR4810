@@ -38,10 +38,11 @@ class Telemetry():
             return [0, 0, 0]
     
     def getOrientation(self):
-        if self.bno055_isPresent:
-            return self.bno055.euler
-        else:
-            return [0, 0, 0]
+        for i in range(100):
+            if self.bno055_isPresent:
+                return self.bno055.euler
+        print("Sensor read failed")
+        return [0,0,0]
 
     def getGravity(self):
         if self.bno055_isPresent:

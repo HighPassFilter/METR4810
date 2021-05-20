@@ -52,6 +52,7 @@ class StateMachine():
         self.data_storage = [[],[],[],[]]
         self.vision = Vision()
         self.vision.start()
+        self.initialOri = self.tele.getOrientation()
     
     def sendData(self, dataType, data):
         data = self.server.packData(dataType, data)
@@ -110,11 +111,16 @@ class StateMachine():
             print("Beginning descent")
         
         #Taking an image and finding target
-        t = time.time()
+        # t = time.time()
         # print("Starting Vision iteration")
-        centre = self.vision.get_center_target()
-        print(centre) 
-        print(time.time() -t)   
+        print(self.tele.getOrientation()[1] - self.initialOri[1], self.tele.getOrientation()[2] - self.initialOri[2])
+        # if abs(self.tele.getOrientation()[1] - self.initialOri[1]) <= 3 and abs(self.tele.getOrientation()[2] - self.initialOri[2]) <= 3:
+        #     # If craft is level TODO calibrate levelness values
+        #     centre = self.vision.get_center_target()
+        #     self.controller.update_channel(self.)
+
+        # print(centre) 
+        # print(time.time() -t)   
         # # Power up the motors
         # for i in range(10, 1200):
         #     self.controller.update_channel(2, i)
