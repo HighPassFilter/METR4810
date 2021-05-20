@@ -116,7 +116,7 @@ class StateMachine():
         # t = time.time()
         # print("Starting Vision iteration")
         #print(self.tele.getOrientation()[1] - self.initialOri[1], self.tele.getOrientation()[2] - self.initialOri[2])
-        self.controller.update_channel(self.THROTTLE_CHANNEL, 800)
+        self.controller.update_channel(self.THROTTLE_CHANNEL, 1100)
         if abs(self.tele.getOrientation()[1] - self.initialOri[1]) <= 4 and abs(self.tele.getOrientation()[2] - self.initialOri[2]) <= 4:
             # If craft is level TODO calibrate levelness values
             # 0.621x + 883
@@ -185,12 +185,15 @@ class StateMachine():
             # Code to disarm the motors and trigger abort mode
             # Disarm motors
             self.disarm_motors()
+            self.controller.shutdown()
+            
     
     def shutdown(self):
         print("Shutting down")
         # Disarm motors
         self.disarm_motors()
         self.controller.shutdown()
+        sys.exit(0)
 
     def reset(self):
         print("Power cycling")
