@@ -121,7 +121,7 @@ class StateMachine():
         ori = self.tele.getOrientation()
         temp = self.tele.getTemperature()
         pres = self.tele.getPressure()
-        self.sendData("Sensor", [time.time() - self.start, np.round([0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
+        self.sendData("Sensor", [time.time() - self.start, np.round(linAcc[0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
 
         #for i in range(1100):
         self.controller.update_channel(self.THROTTLE_CHANNEL, 1100)
