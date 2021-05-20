@@ -235,7 +235,7 @@ class Sender(Agent):
 
             try:
                 # Wait for data from
-                data = self.queue.get(False)
+                data = self.queue.get(timeout=1)
 
                 # Add length of message and delimitter
                 data = str(len(data)) + "_" + data + ";"
