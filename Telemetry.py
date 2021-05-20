@@ -32,10 +32,16 @@ class Telemetry():
 
 
     def getLinearAcceleration(self):
-        if self.bno055_isPresent:
-            return self.bno055.linear_acceleration # Do we need raw acceleration or linear acceleration for the final demo?
-        else:
-            return [0, 0, 0]
+        for i in range(100):
+            if self.bno055_isPresent:
+                try:
+                    output = self.bno055.linear_acceleration
+                    if output[0] != None:
+                        return output
+                except:
+                    continue
+        print("Sensor read failed")
+        return [0,0,0]
     
     def getOrientation(self):
         for i in range(100):
@@ -50,23 +56,41 @@ class Telemetry():
         return [0,0,0]
 
     def getGravity(self):
-        if self.bno055_isPresent:
-            return self.bno055.gravity
-        else:
-            return [0, 0, 0]
+        for i in range(100):
+            if self.bno055_isPresent:
+                try:
+                    output = self.bno055.gravity
+                    if output[0] != None:
+                        return output
+                except:
+                    continue
+        print("Sensor read failed")
+        return [0,0,0]
 
     def getTemperature(self):
-        if self.bmp280_isPresent:
-            return self.bmp280.temperature
-        else:
-            return 18
+        for i in range(100):
+            if self.bmp280_isPresent:
+                try:
+                    output = self.bmp280.temperature
+                    if output != None:
+                        return output
+                except:
+                    continue
+        print("Sensor read failed")
+        return 0
     
 
     def getPressure(self):
-        if self.bmp280_isPresent:
-            return self.bmp280.pressure
-        else:
-            return 1021.05
+        for i in range(100):
+            if self.bmp280_isPresent:
+                try:
+                    output = self.bmp280.pressure
+                    if output != None:
+                        return output
+                except:
+                    continue
+        print("Sensor read failed")
+        return 0
 
 
 

@@ -52,5 +52,9 @@ class GroundStation():
 
             # Send the data to the GUI
             self.tele_pipe.send(data)
+    
+    def receiveRobotData(self):
+        data = self.client.receiveData()
+        return self.client.unpackData(data)
 
 
