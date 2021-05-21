@@ -126,7 +126,7 @@ class StateMachine():
 
         self.controller.update_channel(self.THROTTLE_CHANNEL, self.throttleLevel)
         if self.throttleLevel < 2000:
-            self.throttleLevel += 20
+            self.throttleLevel += 50
         if abs(self.tele.getOrientation()[1] - self.initialOri[1]) <= 4 and abs(self.tele.getOrientation()[2] - self.initialOri[2]) <= 4:
             pass
             # If craft is level TODO calibrate levelness values
