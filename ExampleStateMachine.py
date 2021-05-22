@@ -77,7 +77,6 @@ class StateMachine():
         # Set the servo to open position
         self.servo_pos = 10
         self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, self.servo_pos)
-        print("Setting Servo pos: ", self.servo_pos)
     
     def close_servo(self):
         #INTERRUPTABLE FUNCTION
@@ -127,7 +126,7 @@ class StateMachine():
         self.sendData("Sensor", [time.time() - self.start, np.round(linAcc[0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
 
         self.controller.update_channel(self.THROTTLE_CHANNEL, self.throttleLevel)
-        if self.throttleLevel < 2000: #self.throttleLevel < 2000 and time.time() - self.start >= 0.5
+        if self.throttleLevel < 2000 and time.time() - self.start >= 0.2: #self.throttleLevel < 2000 and time.time() - self.start >= 0.5
             self.throttleLevel += 200
         else:
             self.open_servo()
