@@ -21,7 +21,7 @@ class StateMachine():
     previous_state = 0
 
     centre_pos = 1025
-    RESET_PIN = 16
+    RESET_PIN = 15
 
     #Variables for interuptable functions
     servo_pos = 10
@@ -171,7 +171,7 @@ class StateMachine():
 
     def reset(self):
         print("Power cycling")
-        # code to shut down the pi after disarming motors
+        # Shut down the pi and trigger the power cycle pin
         GPIO.output(self.RESET_PIN, 1)
         time.sleep(1)
         GPIO.output(self.RESET_PIN, 0)
