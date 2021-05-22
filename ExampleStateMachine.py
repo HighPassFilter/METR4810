@@ -127,10 +127,10 @@ class StateMachine():
         self.sendData("Sensor", [time.time() - self.start, np.round(linAcc[0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
 
         self.controller.update_channel(self.THROTTLE_CHANNEL, self.throttleLevel)
-        if self.throttleLevel < 2000:
+        if self.throttleLevel < 2000 and time.time() - self.start >= 0.5:
             self.throttleLevel += 50
-        else:
-            self.open_servo()
+        # else:
+        #     self.open_servo()
         if abs(self.tele.getOrientation()[1] - self.initialOri[1]) <= 4 and abs(self.tele.getOrientation()[2] - self.initialOri[2]) <= 4:
             pass
             # If craft is level TODO calibrate levelness values
