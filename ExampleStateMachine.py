@@ -42,7 +42,7 @@ class StateMachine():
                             ["Disarm the motors: 4"],
                             ["Descend: 5"],
                             ["Shutdown: 6"],
-                            ["Reset: 8"]]
+                            ["Reset: 7"]]
 
     def __init__(self):
         self.RELEASE_SERVO_CHANNEL = 7
@@ -176,8 +176,8 @@ class StateMachine():
         GPIO.output(self.RESET_PIN, 1)
         time.sleep(1)
         GPIO.output(self.RESET_PIN, 0)
-        from subprocess import call
-        call("sudo shutdown -h now", shell=True)
+        import subprocess
+        subprocess.Popen(['shutdown','-h','now'])
 
 
     def change_state(self, new_state):
