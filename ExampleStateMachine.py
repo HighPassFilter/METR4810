@@ -177,7 +177,7 @@ class StateMachine():
         time.sleep(1)
         GPIO.output(self.RESET_PIN, 0)
         from subprocess import call
-        call("sudo shutdown now", shell=True)
+        call("sudo shutdown -h now", shell=True)
 
 
     def change_state(self, new_state):
