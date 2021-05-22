@@ -21,7 +21,7 @@ class StateMachine():
     previous_state = 0
 
     centre_pos = 1025
-    RESET_PIN = 15
+    RESET_PIN = 22
 
     #Variables for interuptable functions
     servo_pos = 10
@@ -176,8 +176,8 @@ class StateMachine():
         GPIO.output(self.RESET_PIN, 1)
         time.sleep(1)
         GPIO.output(self.RESET_PIN, 0)
-        # import subprocess
-        # subprocess.Popen(['shutdown','-h','now'])
+        import subprocess
+        subprocess.Popen(['shutdown','-h','now'])
 
 
     def change_state(self, new_state):
