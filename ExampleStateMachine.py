@@ -58,6 +58,7 @@ class StateMachine():
         self.vision.start()
         self.initialOri = self.tele.getOrientation()
         GPIO.setup(self.RESET_PIN, GPIO.OUT)
+        GPIO.setmode(GPIO.BCM)
     
     def sendData(self, dataType, data):
         data = self.server.packData(dataType, data)
@@ -175,8 +176,8 @@ class StateMachine():
         GPIO.output(self.RESET_PIN, 1)
         time.sleep(1)
         GPIO.output(self.RESET_PIN, 0)
-        import subprocess
-        subprocess.Popen(['shutdown','-h','now'])
+        # import subprocess
+        # subprocess.Popen(['shutdown','-h','now'])
 
 
     def change_state(self, new_state):
