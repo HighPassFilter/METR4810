@@ -164,7 +164,6 @@ class StateMachine():
         
     
     def shutdown(self):
-        print("Shutting down")
         # Disarm motors
         self.disarm_motors()
         self.controller.shutdown()
@@ -201,7 +200,7 @@ class StateMachine():
         elif self.current_state == str(self.SHUTDOWN) and self.current_state != self.previous_state:
             self.shutdown()
         elif self.current_state == str(self.RESET) and self.current_state != self.previous_state:
-            self.shutdown()
+            self.reset()
         elif self.current_state == "h" and self.current_state != self.previous_state:
             self.option_string_builder()
         
