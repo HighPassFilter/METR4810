@@ -57,8 +57,8 @@ class StateMachine():
         self.vision = Vision()
         self.vision.start()
         self.initialOri = self.tele.getOrientation()
-        GPIO.setup(self.RESET_PIN, GPIO.OUT)
         GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.RESET_PIN, GPIO.OUT)
     
     def sendData(self, dataType, data):
         data = self.server.packData(dataType, data)
@@ -173,11 +173,11 @@ class StateMachine():
     def reset(self):
         print("Power cycling")
         # Shut down the pi and trigger the power cycle pin
-        GPIO.output(self.RESET_PIN, 1)
-        time.sleep(1)
-        GPIO.output(self.RESET_PIN, 0)
-        import subprocess
-        subprocess.Popen(['shutdown','-h','now'])
+        GPIO.output(self.RESET_PIN, GPIO.HIGH)
+        # time.sleep(1)
+        # GPIO.output(self.RESET_PIN, 0)
+        # import subprocess
+        # subprocess.Popen(['shutdown','-h','now'])
 
 
     def change_state(self, new_state):
