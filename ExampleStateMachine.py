@@ -4,11 +4,11 @@ import numpy as np
 from Telemetry import Telemetry
 from PiSBUS.SBUS import Controller
 import sys, select
-import keyboard
 from vision.colour_seg_pi import Vision
+import RPi.GPIO as GPIO
 
 class StateMachine():
-    CONNECT = 7
+    RESET = 7
     RESET_SERVO = 1
     ATTACH_SERVO = 2
     ARM = 3
@@ -21,6 +21,7 @@ class StateMachine():
     previous_state = 0
 
     centre_pos = 1025
+    RESET_PIN = 16
 
     #Variables for interuptable functions
     servo_pos = 10
@@ -40,7 +41,8 @@ class StateMachine():
                             ["Arm the motors: 3"],
                             ["Disarm the motors: 4"],
                             ["Descend: 5"],
-                            ["Shutdown: 6"]]
+                            ["Shutdown: 6"],
+                            ["Reset: 8"]]
 
     def __init__(self):
         self.RELEASE_SERVO_CHANNEL = 7
@@ -55,6 +57,7 @@ class StateMachine():
         self.vision = Vision()
         self.vision.start()
         self.initialOri = self.tele.getOrientation()
+        GPIO.setup(self.RESET_PIN, GPIO.OUT)
     
     def sendData(self, dataType, data):
         data = self.server.packData(dataType, data)
@@ -69,12 +72,11 @@ class StateMachine():
     
     def open_servo(self):
         #One Time Function 
-        if(self.current_state != self.previous_state):
-            print("Setting servo to open position")
-            # Set the servo to open position
-            self.servo_pos = 10
-            self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, self.servo_pos)
-            print("Setting Servo pos: ", self.servo_pos)
+        print("Setting servo to open position")
+        # Set the servo to open position
+        self.servo_pos = 10
+        self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, self.servo_pos)
+        print("Setting Servo pos: ", self.servo_pos)
     
     def close_servo(self):
         #INTERRUPTABLE FUNCTION
@@ -91,12 +93,11 @@ class StateMachine():
     
     def arm_motors(self):
         #One Time Function 
-        if(self.current_state != self.previous_state):
-            print("Arming...")
-            # Set the throttle to zero
-            self.controller.update_channel(self.THROTTLE_CHANNEL, 10)
-            # Arm motors
-            self.controller.update_channel(self.ARM_CHANNEL, 1300)
+        print("Arming...")
+        # Set the throttle to zero
+        self.controller.update_channel(self.THROTTLE_CHANNEL, 10)
+        # Arm motors
+        self.controller.update_channel(self.ARM_CHANNEL, 1300)
     
     def disarm_motors(self):
         #One Time Function 
@@ -127,6 +128,8 @@ class StateMachine():
         self.controller.update_channel(self.THROTTLE_CHANNEL, self.throttleLevel)
         if self.throttleLevel < 2000:
             self.throttleLevel += 50
+        else:
+            self.open_servo()
         if abs(self.tele.getOrientation()[1] - self.initialOri[1]) <= 4 and abs(self.tele.getOrientation()[2] - self.initialOri[2]) <= 4:
             pass
             # If craft is level TODO calibrate levelness values
@@ -139,45 +142,6 @@ class StateMachine():
             #     time.sleep(0.2)
             #     self.controller.update_channel(self.PITCH_CHANNEL, self.centre_pos)
             #     self.controller.update_channel(self.ROLL_CHANNEL, self.centre_pos)
-
-        # print(centre) 
-        # print(time.time() -t)   
-        # # Power up the motors
-        # for i in range(10, 1200):
-        #     self.controller.update_channel(2, i)
-
-        # # Release
-        # self.open_servo()
-        # start = time.time()
-        # prev_print = start
-        # if True:
-        #     # Descending
-        #     # Abort is possible 
-        #     try:
-        #         if keyboard.is_pressed('q'):
-        #             self.abort()
-        #     except:
-        #         pass
-        #     # Collect data from sensors
-        #     linAcc = self.tele.getLinearAcceleration()
-        #     ori = self.tele.getOrientation()
-
-        #     temp = self.tele.getTemperature()
-        #     pres = self.tele.getPressure()
-        #     TOF = time.time() - start
-            
-        #     if linAcc[0] != None and ori[0] != None:
-        #         # Store inflight acceleration data
-        #         self.data_storage[0].append(TOF)
-        #         self.data_storage[1].append(linAcc[0])
-        #         self.data_storage[2].append(linAcc[1])
-        #         self.data_storage[3].append(linAcc[2])
-            
-        #     # Send the data to the ground station (Every 0.2 seconds?)
-        #     if time.time() - prev_print > 0.1:
-        #         if linAcc[0] != None and ori[0] != None and temp != None and pres != None:
-        #             self.sendData("Sensor", [TOF, np.round(linAcc[0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
-        #             prev_print = time.time()
 
         # this section will slowly power motors up to required thrust, release the servo and drop
         # while descend:
@@ -192,13 +156,12 @@ class StateMachine():
     
     def abort(self):
         #One time function
-        if(self.current_state != self.previous_state):
-            print("ABORT!")
-            # Code to disarm the motors and trigger abort mode
-            # Disarm motors
-            self.disarm_motors()
-            self.controller.shutdown()
-            
+        print("ABORT!")
+        # Code to disarm the motors and trigger abort mode
+        # Disarm motors
+        self.disarm_motors()
+        self.controller.shutdown()
+        
     
     def shutdown(self):
         print("Shutting down")
@@ -210,19 +173,12 @@ class StateMachine():
     def reset(self):
         print("Power cycling")
         # code to shut down the pi after disarming motors
-    
-    def new_state(self, next_state):
-        change_state = False
-        # Check if command given is valid for certain state
-        if self.state_options[self.current_state].count(next_state) == 1:
-            self.current_state = next_state
-            change_state = True
-        else:
-            print("Invalid command! Please try again.")
+        GPIO.output(self.RESET_PIN, 1)
+        time.sleep(1)
+        GPIO.output(self.RESET_PIN, 0)
+        from subprocess import call
+        call("sudo shutdown now", shell=True)
 
-        # Provide user with available state options
-        self.option_string_builder()
-        return change_state
 
     def change_state(self, new_state):
 
@@ -230,21 +186,23 @@ class StateMachine():
         
         # process = connecting -> connected -> reset_servo -> attach_servo -> arm_motors -> Descend -> Landing
 
-        if self.current_state == str(self.RESET_SERVO):
+        if self.current_state == str(self.RESET_SERVO) and self.current_state != self.previous_state:
             self.open_servo()
         elif self.current_state == str(self.ATTACH_SERVO):
             self.close_servo()
-        elif self.current_state == str(self.ARM):
+        elif self.current_state == str(self.ARM) and self.current_state != self.previous_state:
             self.arm_motors()
-        elif self.current_state == str(self.DISARM):
+        elif self.current_state == str(self.DISARM) and self.current_state != self.previous_state:
             self.disarm_motors()
-        elif self.current_state == str(self.ABORT):
+        elif self.current_state == str(self.ABORT) and self.current_state != self.previous_state:
             self.abort()
         elif self.current_state == str(self.DESCEND):
             self.descend()
-        elif self.current_state == str(self.SHUTDOWN):
+        elif self.current_state == str(self.SHUTDOWN) and self.current_state != self.previous_state:
             self.shutdown()
-        elif self.current_state == "h":
+        elif self.current_state == str(self.RESET) and self.current_state != self.previous_state:
+            self.shutdown()
+        elif self.current_state == "h" and self.current_state != self.previous_state:
             self.option_string_builder()
         
         #If the state has changed, do something about it
@@ -258,14 +216,12 @@ class StateMachine():
         self.server.sendData(data) 
         
     def option_string_builder(self):
-        #One time function
-        if(self.current_state != self.previous_state):
-            msg = ""
-            for option in self.state_options_helper:
-                msg += option[0] + "\n"
+        msg = ""
+        for option in self.state_options_helper:
+            msg += option[0] + "\n"
 
-            msg += ":"
-            print(msg)
+        msg += ":"
+        print(msg)
 
 if __name__ == "__main__":
 
