@@ -89,7 +89,6 @@ class StateMachine():
             self.servo_pos = self.servo_pos + 50
             self.controller.update_channel(self.RELEASE_SERVO_CHANNEL, self.servo_pos)
             print("Setting Servo pos: ", self.servo_pos)
-
     
     def arm_motors(self):
         #One Time Function 
