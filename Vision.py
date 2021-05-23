@@ -28,9 +28,9 @@ class Vision():
                 cX = int(M["m10"] / M["m00"])
                 cY = int(M["m01"] / M["m00"])
                 cv2.circle(frame, (cX, cY), 7, (0, 0, 255), -1)
-                return (frame, cX, cY, cX - frame.shape[1]/2, cY - frame.shape[0]/2, largestArea)
+                return (frame, cX - frame.shape[1]/2, cY - frame.shape[0]/2, largestArea)
                 #return (cX, cY)
             except:
                 pass
 
-        return (frame, 0, 0, 0, 0, 0)     
+        return (frame, 0, 0, 0)     
