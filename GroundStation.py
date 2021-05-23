@@ -56,7 +56,7 @@ class GroundStation():
 
             # Get centre of image
             centre_data = self.vision.get_centre()
-            cv2.imshow(centre_data[0])
+            cv2.imshow("image", centre_data[0])
             self.client.sendData(self.client.packData("Vision", (centre_data[1], centre_data[2], centre_data[3])))
 
             if cv2.waitKey(1) & 0xFF == ord('q'):

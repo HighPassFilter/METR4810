@@ -61,27 +61,7 @@ class WiFi():
         # Close the socket
         self.socket.close()
         logging.info("Closing connection on %s", self.identity)
-
-class Server(WiFi):
-    def __init__(self, port=7777): # Tested
-        # Initialise class attributes
-        super().__init__("server", "", port)
-
-        # Bind the socket
-        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.socket.bind((self.host, port))
-        print("Socket bind complete")
-
-        # Listen for a connection
-        self.socket.listen()
-        # Accept the connection from client
-        conn, addr = self.socket.accept()
-        logging.info("Server connected to %s", addr)
-
-        # Setup Listener and Sender
-        super().setupAgents(conn)
-        #self.listener.isShutDown = 1
-
+    
     @staticmethod
     def packData(dataType, data): 
         if dataType == "Sensor":
@@ -107,11 +87,32 @@ class Server(WiFi):
 
             return  msg
         elif dataType == "Vision":
-             msg = dataType + ":" + data[0] + "," + data[1] + "," + data[2]
-             return msg
+                msg = dataType + ":" + str(data[0]) + "," + str(data[1]) + "," + str(data[2])
+                return msg
 
         else:
             return dataType + ":" + data
+
+class Server(WiFi):
+    def __init__(self, port=7777): # Tested
+        # Initialise class attributes
+        super().__init__("server", "", port)
+
+        # Bind the socket
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.socket.bind((self.host, port))
+        print("Socket bind complete")
+
+        # Listen for a connection
+        self.socket.listen()
+        # Accept the connection from client
+        conn, addr = self.socket.accept()
+        logging.info("Server connected to %s", addr)
+
+        # Setup Listener and Sender
+        super().setupAgents(conn)
+        self.listener.isShutDown = 1
+
 
 class Client(WiFi):
     def __init__(self, host, port=7777): # Tested

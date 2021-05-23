@@ -4,7 +4,6 @@ import numpy as np
 from Telemetry import Telemetry
 from PiSBUS.SBUS import Controller
 import sys, select
-from vision.colour_seg_pi import Vision
 import RPi.GPIO as GPIO
 
 class StateMachine():
@@ -54,8 +53,6 @@ class StateMachine():
         self.controller = Controller()
         self.tele = Telemetry()
         self.data_storage = [[],[],[],[]]
-        self.vision = Vision()
-        self.vision.start()
         self.initialOri = self.tele.getOrientation()
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.RESET_PIN, GPIO.OUT)
