@@ -111,7 +111,7 @@ class Server(WiFi):
 
         # Setup Listener and Sender
         super().setupAgents(conn)
-        self.listener.isShutDown = 1
+        #self.listener.isShutDown = 1
 
 
 class Client(WiFi):
