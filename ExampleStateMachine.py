@@ -114,6 +114,7 @@ class StateMachine():
             print("Beginning descent")
             self.start = time.time()
             self.throttleLevel = 20
+            self.open_servo()
         
         #Taking an image and finding target
         # t = time.time()
@@ -126,11 +127,9 @@ class StateMachine():
         self.sendData("Sensor", [time.time() - self.start, np.round(linAcc[0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
 
         self.controller.update_channel(self.THROTTLE_CHANNEL, self.throttleLevel)
-        if self.throttleLevel < 800 and time.time() - self.start >= 0.5: #self.throttleLevel < 2000 and time.time() - self.start >= 0.5
+        if self.throttleLevel < 1500: #self.throttleLevel < 2000 and time.time() - self.start >= 0.5
             self.throttleLevel += 200
-        else:
-            print("hit")
-            self.open_servo()
+            
         if abs(self.tele.getOrientation()[1] - self.initialOri[1]) <= 4 and abs(self.tele.getOrientation()[2] - self.initialOri[2]) <= 4:
             pass
             # If craft is level TODO calibrate levelness values
@@ -172,12 +171,12 @@ class StateMachine():
 
     def reset(self):
         print("Power cycling")
-        # Shut down the pi and trigger the power cycle pin
+        # Reboot the pi and trigger the power cycle pin
         GPIO.output(self.RESET_PIN, GPIO.HIGH)
-        # time.sleep(1)
-        # GPIO.output(self.RESET_PIN, 0)
-        # import subprocess
-        # subprocess.Popen(['shutdown','-h','now'])
+        time.sleep(1)
+        GPIO.output(self.RESET_PIN, 0)
+        import subprocess
+        subprocess.Popen(['shutdown','-r','now'])
 
 
     def change_state(self, new_state):
