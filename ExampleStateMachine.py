@@ -3,24 +3,9 @@ import time
 import numpy as np
 from Telemetry import Telemetry
 from PiSBUS.SBUS import Controller
-import mpmath as mp
 import sys, select
 import RPi.GPIO as GPIO
 
-def rotation_matrix_from_vectors(vec1, vec2):
-
-    a, b = (vec1 / np.linalg.norm(vec1)).reshape(3), (vec2 / np.linalg.norm(vec2)).reshape(3)
-    v = np.cross(a, b)
-    c = np.dot(a, b)
-    s = mp.mpf(np.linalg.norm(v))
-    mp.nprint(s)
-    if s != 0:
-        kmat = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
-        rotation_matrix = np.eye(3) + kmat + kmat.dot(kmat) * ((1 - c) / (s ** 2))
-
-        return rotation_matrix
-    else:
-        return None
 class StateMachine():
     RESET = 7
     RESET_SERVO = 1
@@ -68,19 +53,9 @@ class StateMachine():
         self.controller = Controller()
         self.tele = Telemetry()
         self.data_storage = [[],[],[],[]]
-        self.initialOri = self.oriWorldCoord()
+        self.initialOri = self.tele.getOrientation()
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.RESET_PIN, GPIO.OUT)
-
-    def oriWorldCoord(self):
-        ori = self.tele.getOrientation()
-        grav = self.tele.getGravity()
-        ori = np.array([ori[0], ori[1], ori[2]])
-        R = rotation_matrix_from_vectors(np.array([grav[0], grav[1], grav[2]]), )
-        if R is not None:
-            return np.dot(R, ori)
-        else:
-            return None
     
     def sendData(self, dataType, data):
         data = self.server.packData(dataType, data)
@@ -171,10 +146,9 @@ class StateMachine():
         self.sendData("Sensor", [time.time() - self.start, np.round(linAcc[0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
 
         self.controller.update_channel(self.THROTTLE_CHANNEL, self.throttleLevel)
-        ori = self.getOriWorldCoord()
         if self.throttleLevel < 1400: #self.throttleLevel < 2000 and time.time() - self.start >= 0.5
             self.throttleLevel += 200
-        elif abs(ori[1] - self.initialOri[1]) <= 10 and abs(ori[2] - self.initialOri[2]) <= 10:
+        elif abs(self.tele.getOrientation()[1] - self.initialOri[1]) <= 10 and abs(self.tele.getOrientation()[2] - self.initialOri[2]) <= 10:
             # If craft is level TODO calibrate levelness values
             # 0.621x + 883
             # print("hit")
@@ -284,5 +258,3 @@ if __name__ == "__main__":
             machine.change_state(sys.stdin.readline().strip())
         else:
             machine.change_state(machine.current_state)
-
-
