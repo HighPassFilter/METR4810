@@ -133,9 +133,9 @@ class StateMachine():
             centre = self.server.unpackData(self.server.receiveData())
             print(centre)
             if centre[0] != 0:
-                self.controller.update_channel(self.PITCH_CHANNEL, self.centre_pos - int(0.5*centre[1]))
-                self.controller.update_channel(self.ROLL_CHANNEL, self.centre_pos + int(0.5*centre[0]))
-                time.sleep(0.2)
+                self.controller.update_channel(self.PITCH_CHANNEL, self.centre_pos - int(1*centre[1]))
+                self.controller.update_channel(self.ROLL_CHANNEL, self.centre_pos + int(1*centre[0]))
+                time.sleep(0.5)
                 self.controller.update_channel(self.PITCH_CHANNEL, self.centre_pos)
                 self.controller.update_channel(self.ROLL_CHANNEL, self.centre_pos)
 
