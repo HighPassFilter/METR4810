@@ -4,7 +4,10 @@ from WiFi import Client
 # Threading libraries
 from multiprocessing import Process
 import keyboard
+import cv2
 
+# Camera library
+from Vision import Vision   
 def telemetryProcess(groundStation):
     try:
         ipAddress = "192.168.43.43"
@@ -22,6 +25,7 @@ class GroundStation():
         self.client = ""
         self.tele_pipe = pipe
         self.sensorData = [[], [], [], [], [], [], []]
+        self.vision = Vision()
 
         # Setup new process
         self.process = Process(target=telemetryProcess, args=(self,))
@@ -49,6 +53,14 @@ class GroundStation():
 
             # Send the data to the GUI
             self.tele_pipe.send(data)
+
+            # Get centre of image
+            centre_data = self.vision.get_centre()
+            cv2.imshow(centre_data[0])
+            self.client.sendData(self.client.packData("Vision", (centre_data[1], centre_data[2], centre_data[3])))
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
     
     def receiveRobotData(self):
         data = self.client.receiveData()
