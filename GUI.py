@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from threading import Thread
-from queue import Queue
+from multiprocessing import Process
 import time
 
 # Setup the graph GUI
@@ -47,6 +46,8 @@ class UserInterface():
     def __init__(self, pipe):
         # Store the pipe for receiving telemetry data
         self.main_pipe = pipe
+        self.process = Process(target=self.startGraph, args=(self,))
+        self.process.start()
 
     def startGraph(self, groundStation):
         # Start the main loop for plotting the graphs
