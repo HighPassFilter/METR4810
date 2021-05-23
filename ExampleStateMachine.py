@@ -131,7 +131,7 @@ class StateMachine():
             self.throttleLevel += 200
             
         if abs(self.tele.getOrientation()[1] - self.initialOri[1]) <= 4 and abs(self.tele.getOrientation()[2] - self.initialOri[2]) <= 4:
-            pass
+            print("level")
             # If craft is level TODO calibrate levelness values
             # 0.621x + 883
             # centre = self.vision.get_center_target()
