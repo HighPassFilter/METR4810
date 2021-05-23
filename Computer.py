@@ -15,8 +15,6 @@ class Computer():
         # Setup ground station
         self.gs = GroundStation(self.tele_pipe)
 
-        # Setup the graph interface
-        self.user.startGraph(self.gs)
         # Note that the user interface handles the initial setup of providing the ground station with the host information
     
 if __name__ == '__main__':
