@@ -148,7 +148,7 @@ class StateMachine():
         self.controller.update_channel(self.THROTTLE_CHANNEL, self.throttleLevel)
         if self.throttleLevel < 1400: #self.throttleLevel < 2000 and time.time() - self.start >= 0.5
             self.throttleLevel += 200
-        elif abs(self.tele.getOrientation()[1] - self.initialOri[1]) <= 10 and abs(self.tele.getOrientation()[2] - self.initialOri[2]) <= 10:
+        else: #elif abs(self.tele.getOrientation()[1] - self.initialOri[1]) <= 10 and abs(self.tele.getOrientation()[2] - self.initialOri[2]) <= 10:
             # If craft is level TODO calibrate levelness values
             # 0.621x + 883
             # print("hit")
@@ -217,7 +217,7 @@ class StateMachine():
         elif self.current_state == str(self.DESCEND):
             self.descend()
         elif self.current_state == str(9):
-            self.descend()
+            self.descend2()
         elif self.current_state == str(self.SHUTDOWN) and self.current_state != self.previous_state:
             self.shutdown()
         elif self.current_state == str(self.RESET) and self.current_state != self.previous_state:
