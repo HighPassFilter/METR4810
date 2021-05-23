@@ -28,6 +28,7 @@ class GroundStation():
         self.process.start()
     
     def collect_data(self):
+        # Main loop for collecting telemetry data from the robot
         while True:
             try:  # used try so that if user pressed other than the given key error will not be shown
                 if keyboard.is_pressed('q'):  # if key 'q' is pressed 

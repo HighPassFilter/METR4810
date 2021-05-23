@@ -49,9 +49,11 @@ class UserInterface():
         self.main_pipe = pipe
 
     def startGraph(self, groundStation):
+        # Start the main loop for plotting the graphs
         ani = animation.FuncAnimation(fig, run, fargs=(self.main_pipe,) ,interval=1, repeat=False, blit=True)
         plt.show()
 
+# This function here is the main loop for updating the graph
 def run(frame, pipe):
     data = ""
     global xdata, acc_x_data, acc_y_data, acc_z_data, yaw_data, pitch_data, roll_data, temp_data, pres_data, max_y
@@ -80,6 +82,7 @@ def run(frame, pipe):
         roll_data.append(data[6])
         temp_data.append(data[7])
         pres_data.append(data[8])
+
     except Exception:
         print(data)
         print("Error in receiving packets")
