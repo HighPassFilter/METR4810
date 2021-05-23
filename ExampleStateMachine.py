@@ -104,6 +104,29 @@ class StateMachine():
             # Disarm motors
             self.controller.update_channel(self.ARM_CHANNEL, 10)
     
+    def descend2(self):
+        #INTERRUPTABLE STATE
+        if(self.current_state != self.previous_state):
+            print("Beginning descent")
+            self.start = time.time()
+            self.throttleLevel = 20
+            self.open_servo()
+        
+        #Taking an image and finding target
+        # t = time.time()
+        # print("Starting Vision iteration")
+        #print(self.tele.getOrientation()[1] - self.initialOri[1], self.tele.getOrientation()[2] - self.initialOri[2])
+        linAcc = self.tele.getLinearAcceleration()
+        ori = self.tele.getOrientation()
+        temp = self.tele.getTemperature()
+        pres = self.tele.getPressure()
+        self.sendData("Sensor", [time.time() - self.start, np.round(linAcc[0], 2), np.round(linAcc[1], 2), np.round(linAcc[2], 2), np.round(ori[0], 2), np.round(ori[1], 2), np.round(ori[2], 2), np.round(temp, 2), np.round(pres, 2)])
+
+        self.controller.update_channel(self.THROTTLE_CHANNEL, self.throttleLevel)
+        if self.throttleLevel < 1500: #self.throttleLevel < 2000 and time.time() - self.start >= 0.5
+            self.throttleLevel += 200
+    
+
     def descend(self):
         #INTERRUPTABLE STATE
         if(self.current_state != self.previous_state):
@@ -125,7 +148,7 @@ class StateMachine():
         self.controller.update_channel(self.THROTTLE_CHANNEL, self.throttleLevel)
         if self.throttleLevel < 1500: #self.throttleLevel < 2000 and time.time() - self.start >= 0.5
             self.throttleLevel += 200
-        else: # abs(self.tele.getOrientation()[1] - self.initialOri[1]) <= 8 and abs(self.tele.getOrientation()[2] - self.initialOri[2]) <= 8
+        elif abs(self.tele.getOrientation()[1] - self.initialOri[1]) <= 8 and abs(self.tele.getOrientation()[2] - self.initialOri[2]) <= 8:
             # If craft is level TODO calibrate levelness values
             # 0.621x + 883
             # print("hit")
@@ -193,6 +216,8 @@ class StateMachine():
             self.abort()
         elif self.current_state == str(self.DESCEND):
             self.descend()
+        elif self.current_state == str(9):
+            self.descend()
         elif self.current_state == str(self.SHUTDOWN) and self.current_state != self.previous_state:
             self.shutdown()
         elif self.current_state == str(self.RESET) and self.current_state != self.previous_state:
@@ -215,7 +240,6 @@ class StateMachine():
         for option in self.state_options_helper:
             msg += option[0] + "\n"
 
-        msg += ":"
         print(msg)
 
 if __name__ == "__main__":
