@@ -1,7 +1,7 @@
 ''' This library provides the Robot and Ground Station class with the ability to communicate with each other'''
 import logging
 import socket
-from queue import Queue, Empty
+from queue import LifoQueue, Empty
 import threading
 
 # Data logger setup
@@ -106,6 +106,10 @@ class Server(WiFi):
                     msg += ","
 
             return  msg
+        elif dataType == "Vision":
+             msg = dataType + ":" + data[0] + "," + data[1] + "," + data[2]
+             return msg
+
         else:
             return dataType + ":" + data
 
@@ -136,13 +140,21 @@ class Client(WiFi):
                 data[i] = float(data[i])
 
             return data
+        elif dataType == "Vision":
+            data = data.split(",")
+
+            # Ensure that data is in float format
+            for i in range(len(data)):
+                data[i] = int(data[i])
+
+            return data
         else:
             return data
 
 class Agent(threading.Thread):
     def __init__(self, socket):
         self.socket = socket
-        self.queue = Queue()
+        self.queue = LifoQueue()
         self.isShutDown = 0
         threading.Thread.__init__(self)
 
