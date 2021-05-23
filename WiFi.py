@@ -92,6 +92,30 @@ class WiFi():
 
         else:
             return dataType + ":" + data
+        
+    @staticmethod
+    def unpackData(data):
+        if data == "":
+            return data
+        dataType, data = data.split(":")
+        if dataType == "Sensor":
+            data = data.split(",")
+
+            # Ensure that data is in float format
+            for i in range(len(data)):
+                data[i] = float(data[i])
+
+            return data
+        elif dataType == "Vision":
+            data = data.split(",")
+
+            # Ensure that data is in float format
+            for i in range(len(data)):
+                data[i] = int(data[i])
+
+            return data
+        else:
+            return data
 
 class Server(WiFi):
     def __init__(self, port=7777): # Tested
@@ -128,29 +152,6 @@ class Client(WiFi):
         # Setup Listener and Sender
         super().setupAgents()
 
-    @staticmethod
-    def unpackData(data):
-        if data == "":
-            return data
-        dataType, data = data.split(":")
-        if dataType == "Sensor":
-            data = data.split(",")
-
-            # Ensure that data is in float format
-            for i in range(len(data)):
-                data[i] = float(data[i])
-
-            return data
-        elif dataType == "Vision":
-            data = data.split(",")
-
-            # Ensure that data is in float format
-            for i in range(len(data)):
-                data[i] = int(data[i])
-
-            return data
-        else:
-            return data
 
 class Agent(threading.Thread):
     def __init__(self, socket):
