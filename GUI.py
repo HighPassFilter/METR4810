@@ -47,6 +47,7 @@ class UserInterface():
         # Store the pipe for receiving telemetry data
         self.main_pipe = pipe
         self.process = Process(target=self.startGraph, args=(self,))
+        self.process.start()
 
     def startGraph(self, groundStation):
         # Start the main loop for plotting the graphs
