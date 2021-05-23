@@ -135,9 +135,9 @@ class StateMachine():
             if centre[0] != 0:
                 self.controller.update_channel(self.PITCH_CHANNEL, self.centre_pos - int(1*centre[1]))
                 self.controller.update_channel(self.ROLL_CHANNEL, self.centre_pos + int(1*centre[0]))
-                # time.sleep(0.3)
-                # self.controller.update_channel(self.PITCH_CHANNEL, self.centre_pos)
-                # self.controller.update_channel(self.ROLL_CHANNEL, self.centre_pos)
+                time.sleep(0.4)
+                self.controller.update_channel(self.PITCH_CHANNEL, self.centre_pos)
+                self.controller.update_channel(self.ROLL_CHANNEL, self.centre_pos)
 
         # this section will slowly power motors up to required thrust, release the servo and drop
         # while descend:
