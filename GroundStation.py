@@ -2,12 +2,11 @@
 from WiFi import Client
 
 # Threading libraries
-from multiprocessing import Process
 import keyboard
 import cv2
 
 # Camera library
-from Vision import Vision   
+from Vision import Vision 
 def telemetryProcess(groundStation):
     try:
         ipAddress = "192.168.43.43"
@@ -28,8 +27,9 @@ class GroundStation():
         self.vision = Vision()
 
         # Setup new process
-        self.process = Process(target=telemetryProcess, args=(self,))
-        self.process.start()
+        # self.process = Process(target=telemetryProcess, args=(self,))
+        # self.process.start()
+        telemetryProcess(self)
     
     def collect_data(self):
         # Main loop for collecting telemetry data from the robot
