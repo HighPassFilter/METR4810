@@ -111,7 +111,7 @@ class WiFi():
 
             # Ensure that data is in float format
             for i in range(len(data)):
-                data[i] = int(data[i])
+                data[i] = float(data[i])
 
             return data
         else:
