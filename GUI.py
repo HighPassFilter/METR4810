@@ -5,30 +5,38 @@ from queue import Queue
 import time
 
 # Setup the graph GUI
-# create a figure with two subplots
+# Create a figure with four subplots
 fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2,2)
 
-# intialize two line objects (one in each axes)
+# Intialize the axes for the acceleration subplot
 acc_x_line, = ax1.plot([], [], color='r')
 acc_y_line, = ax1.plot([], [], color='b')
 acc_z_line, = ax1.plot([], [], color='g')
 ax1.set_title('Linear acceleration (m/s^2)')
+
+# Intialize the axes for the orientation subplot
 yaw_line, = ax2.plot([], [], color='r')
 pitch_line, = ax2.plot([], [], color='b')
 roll_line, = ax2.plot([], [], color='g')
 ax2.set_title('Orientation (degrees)')
+
+# Intialize the axes for the temperature subplot
 temp_line, = ax3.plot([], [], color='tab:orange')
 ax3.set_title('Temperature (degree Celsius)')
+
+# Intialize the axes for the pressure subplot
 pres_line, = ax4.plot([], [], color = 'tab:cyan')
 ax4.set_title('Pressure (hPa)')
+
 line = [acc_x_line, acc_y_line, acc_z_line, yaw_line, pitch_line, roll_line, temp_line, pres_line]
 
-# the same axes initalizations as before (just now we do it for both of them)
+# Set the y limits of each subplots
 ax1.set_ylim(-10, 10)
 ax2.set_ylim(-180, 360)
 ax3.set_ylim(0, 50)
 ax4.set_ylim(900, 1200)
 
+# Set the x limits of each subplots
 for ax in [ax1, ax2, ax3, ax4]:
     ax.set_xlim(0, 10)
 
@@ -37,7 +45,7 @@ xdata, acc_x_data, acc_y_data, acc_z_data, yaw_data, pitch_data, roll_data, temp
 max_y = 20
 class UserInterface():
     def __init__(self, pipe):
-       
+        # Store the pipe for receiving telemetry data
         self.main_pipe = pipe
 
     def startGraph(self, groundStation):
@@ -49,7 +57,6 @@ def run(frame, pipe):
     global xdata, acc_x_data, acc_y_data, acc_z_data, yaw_data, pitch_data, roll_data, temp_data, pres_data, max_y
     while data == "":
         # make sure that data is not empty
-
         while pipe.poll() == 0:
             pass
         data = pipe.recv()
@@ -57,13 +64,14 @@ def run(frame, pipe):
     # update the data
     xdata.append(data[0])
 
-    # Reset the data after 20 seconds
+    # Release the data after 20 seconds
     resetAxis = 0
     if data[0] == max_y:
         xdata, acc_x_data, acc_y_data, acc_z_data, yaw_data, pitch_data, roll_data, temp_data, pres_data = [], [], [], [], [], [], [], [], []
         resetAxis = 1
         max_y = data[0] + 20
     try:
+        # Extract the data from telemetry packet
         acc_x_data.append(data[1])
         acc_y_data.append(data[2])
         acc_z_data.append(data[3])
@@ -76,8 +84,7 @@ def run(frame, pipe):
         print(data)
         print("Error in receiving packets")
 
-
-    # axis limits checking. Same as before, just for both axes
+    # Update the x limits to fit time data streaming in
     for ax in [ax1, ax2, ax3, ax4]:
         xmin, xmax = ax.get_xlim()
         ymin, ymax = ax.get_ylim()
@@ -88,7 +95,7 @@ def run(frame, pipe):
         if resetAxis == 1:
             ax.set_xlim(data[0], data[0]+10)
 
-    # update the data of both line objects
+    # update the data of all the subplots
     line[0].set_data(xdata, acc_x_data)
     line[1].set_data(xdata, acc_y_data)
     line[2].set_data(xdata, acc_z_data)

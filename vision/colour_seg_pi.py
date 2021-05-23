@@ -63,71 +63,40 @@ class Vision:
         # Get image from the camera
         image = self.frame
 
+        # Set HSV colour filter bounds of interest 
         lower = np.array([0,150,100], dtype = "uint8")
         upper = np.array([15,255,255], dtype = "uint8")
 
-        # Perform HSV colour filtering
-        # print("<------------------------------------------------------>")
-        # print("Convert RGB to HSV")
-        # self.measure.tic()
+        # Convert the RGB image to HSV
         hsv_img = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-        # self.measure.toc()
 
-        # print("HSV Colour thresholding")
-        # self.measure.tic()
+        # Filter the pixels that are not within the colour range
         curr_mask = cv2.inRange(hsv_img, lower, upper)
-        # self.measure.toc()
 
-        # print("HSV equalization(?)")
-        # self.measure.tic()
-        # hsv_img[curr_mask > 0] = ([15,255,200])
-        # self.measure.toc()
+        # Find the contours of the valid pixels
+        contours, hierarchy =  cv2.findContours(curr_mask ,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
-        # print("HSV colour filtering")
-        # self.measure.tic()
-        # hsv_img[curr_mask == 0] = ([0,0,0])
-        # self.measure.toc()
-
-        # # Convert HSV colour to RGB
-        # print("Convert HSV to RGB")
-        # self.measure.tic()
-        # output = cv2.cvtColor(hsv_img, cv2.COLOR_HSV2RGB) # Could try directly applying a mask on RGB instead?
-        # self.measure.toc()
-
-        # # Convert HSV colour to RGB
-        # print("Convert RGB to gray")
-        # self.measure.tic()
-        # gray = cv2.cvtColor(output, cv2.COLOR_RGB2GRAY)
-        # self.measure.toc()
-
-        # # Binary thresholding
-        # print("Threshold the binary colours")
-        # ret, threshold = cv2.threshold(gray, 90, 255, 0)
-
-        contours, hierarchy =  cv2.findContours(curr_mask ,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE) # Could we directly use the mask here?
-        
-        # if False in (curr_mask == threshold):
-        #     print("Nope :/")
-        # else:
-        #     print("Absolutely!!!")
-
+        # Find the centre of the largest orange object in the camera view
         largestCont = None
         largestArea = -1
         for cont in contours:
+            # Obtain the area of each individual closed contour area
             area = cv2.contourArea(cont)
             if area > largestArea:
                 largestArea = area
                 largestCont = cont
         if len(contours) > 0:
+            # Obtain the centre of each individual
             M = cv2.moments(largestCont)
             try:
                 cX = int(M["m10"] / M["m00"])
                 cY = int(M["m01"] / M["m00"])
-                #cv2.circle(image, (cX, cY), 7, (0, 0, 255), -1)
+                # Return the centre of the largest orange pixels
                 return (cX - image.shape[1]/2, cY - image.shape[0]/2, largestArea)
-                #return (cX, cY)
             except:
                 pass
+        
+        # Return 0 if no closed contours of orange pixels are detected 
         return (0,0,0)     
 
 class MeasureTime():

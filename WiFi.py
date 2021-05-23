@@ -85,6 +85,7 @@ class Server(WiFi):
     @staticmethod
     def packData(dataType, data): 
         if dataType == "Sensor":
+            # Documentation of data array
             #TOF = data[0]
             #acc_x = data[1]
             #acc_y = data[2]
